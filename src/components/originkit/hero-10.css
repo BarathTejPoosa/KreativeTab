@@ -1,0 +1,8 @@
+/* hero-10 — Digup AI prism hero (section-16) */
+
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600;700&display=swap");
+
+@theme {
+  --font-instrument-serif: "Instrument Serif", Inter, ui-sans-serif, sans-serif;
+  --font-geist: Geist, Inter, ui-sans-serif, sans-serif;
+}

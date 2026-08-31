@@ -1,14 +1,8 @@
 {
-	"name": "@majesticooss/mizar",
+	"name": "kreativetab",
 	"type": "module",
 	"version": "0.0.1",
 	"private": true,
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/majesticooss/mizar.git"
-	},
-	"bugs": "https://github.com/majesticooss/mizar/issues",
-	"homepage": "https://github.com/majesticooss/mizar",
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
@@ -29,12 +23,17 @@
 		"@cloudflare/pages-plugin-mailchannels": "^0.1.5",
 		"@keystatic/astro": "^5.0.0",
 		"@keystatic/core": "^0.5.17",
+		"@tailwindcss/postcss": "^4.3.3",
 		"alpinejs": "^3.14.0",
-		"astro": "4.7.0",
-		"gsap": "^3.12.5",
+		"astro": "^4.7.0",
+		"framer-motion": "^13.0.0",
+		"gsap": "^3.15.0",
 		"keystatic-components": "^0.0.2",
+		"motion": "^13.0.0",
+		"postcss": "^8.5.26",
 		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react-dom": "^18.3.1",
+		"three": "^0.185.1"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.7.3",
@@ -58,7 +57,7 @@
 		"astro-seo": "^0.8.3",
 		"satori": "^0.10.13",
 		"sharp": "0.33.4",
-		"tailwindcss": "^3.4.3",
+		"tailwindcss": "^4.3.3",
 		"workbox-window": "^7.1.0"
 	},
 	"overrides": {

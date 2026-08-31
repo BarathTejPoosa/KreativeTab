@@ -3,7 +3,6 @@ import cloudflare from "@astrojs/cloudflare";
 import markdoc from "@astrojs/markdoc";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
-import tailwind from "@astrojs/tailwind";
 import keystatic from "@keystatic/astro";
 import AstroPWA from "@vite-pwa/astro";
 import icon from "astro-icon";
@@ -39,10 +38,6 @@ export default defineConfig({
 	},
 	integrations: [
 		alpinejs(),
-		tailwind({
-			// Base style is applied on the file global.css
-			applyBaseStyles: false,
-		}),
 		sitemap(),
 		icon(),
 		react(),

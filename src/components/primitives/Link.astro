@@ -33,17 +33,17 @@ const {
 } = Astro.props as Props;
 
 const sizes = {
-	xs: "",
-	sm: "px-4 py-2",
-	md: "px-5 py-2.5 text-xl text-lg",
-	lg: "px-8 py-3 text-2xl",
+	xs: "min-h-9 px-3 text-xs",
+	sm: "min-h-10 px-4 text-sm",
+	md: "min-h-11 px-5 text-sm",
+	lg: "min-h-12 px-6 text-base",
 };
 
 const iconSizes = {
-	xs: 20,
-	sm: 25,
-	md: 30,
-	lg: 40,
+	xs: 16,
+	sm: 18,
+	md: 20,
+	lg: 22,
 };
 
 const Tag = Astro.props.tag || "a";
@@ -53,12 +53,10 @@ if (Tag === "a" && !href) {
 }
 
 const styles = {
-	primary: "",
-	button: "button-primary bg-black text-white items-center justify-center py-2.5 px-6 text-center inline-block max-w-full rounded-md font-semibold",
-	buttonLight:
-		"button-primary bg-white text-black items-center justify-center py-3.5 px-6 text-center inline-block max-w-full rounded-md font-bold",
-	outline:
-		"hover:bg-primary-800 hover:text-white border border-primary-100 rounded-md",
+	primary: "text-black underline decoration-1 underline-offset-4 transition-colors hover:text-brand-charcoal",
+	button: "button-primary items-center gap-2 border border-brand-flare bg-brand-flare text-brand-ink font-semibold hover:border-white hover:bg-white",
+	buttonLight: "button-primary items-center gap-2 border border-white bg-transparent text-white font-semibold hover:bg-white hover:text-black",
+	outline: "button-primary items-center gap-2 border border-black bg-transparent text-black font-semibold hover:bg-black hover:text-white",
 };
 ---
 
@@ -81,15 +79,12 @@ const styles = {
 
 <style>
 	.button-primary {
-		transition: color 0.2s;
-	}
-	.button-primary:hover {
-		opacity: 0.85;
+		transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
 	}
 	.button-primary [data-icon="iconamoon:arrow-top-right-1-thin"] {
-		transition: transform 0.2s;
+		transition: transform 180ms ease;
 	}
 	.button-primary:hover [data-icon="iconamoon:arrow-top-right-1-thin"] {
-		transform: translate(3px, -3px);
+		transform: translate(2px, -2px);
 	}
 </style>

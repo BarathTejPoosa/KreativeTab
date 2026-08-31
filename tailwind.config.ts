@@ -15,11 +15,21 @@ const config: Config = {
 			...defaultTheme.screens,
 		},
 		extend: {
-			colors: tailwindcssPaletteGenerator([style.theme.colors.primary, style.theme.colors.secondary]),
+			colors: {
+				...tailwindcssPaletteGenerator([style.theme.colors.primary, style.theme.colors.secondary]),
+				brand: {
+					deep: "#000000",
+					signal: "#000000",
+					flare: "#8BE67D",
+					ink: "#0E1330",
+					paper: "#F8F7F3",
+					charcoal: "#2F393D",
+				},
+			},
 			fontFamily: {
-				sans: ["Inter Tight", ...defaultTheme.fontFamily.sans],
+				sans: ["Inter", ...defaultTheme.fontFamily.sans],
 				mono: ["Space Mono", ...defaultTheme.fontFamily.mono],
-				display: ["Montserrat", ...defaultTheme.fontFamily.sans],
+				display: ["Plus Jakarta Sans", ...defaultTheme.fontFamily.sans],
 			},
 		},
 	},

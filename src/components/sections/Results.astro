@@ -1,8 +1,4 @@
 ---
-import { Image } from "astro:assets";
-import type { Props as ButtonProps } from "@/components/primitives/Link.astro";
-import Link from "@/components/primitives/Link.astro";
-
 interface Props {
 	title: string;
 	results: {
@@ -14,22 +10,25 @@ interface Props {
 const { title, results } = Astro.props;
 ---
 
-<div class="text-sm font-medium py-20">
-	<p
-		class="text-4xl lg:text-[2.13rem] leading-9 font-semibold lg:max-w-[64%] mb-3"
-		set:html={title}
-	/>
-	<div class="mt-16">
+<section
+	data-cursor-theme="dark"
+	class="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-black text-white"
+>
+	<div class="mx-auto w-full max-w-[90rem] px-5 lg:px-10 py-24 lg:py-32">
+		<p
+			class="text-[clamp(1.75rem,2.8vw,2.375rem)] leading-tight font-semibold lg:max-w-[64%] mb-16 text-white"
+			set:html={title}
+		/>
 		<div
 			class="auto-cols-fr grid-cols-1 lg:grid-cols-3 grid-rows-[auto] grid gap-[1.88rem]"
 		>
 			{
 				results?.map(({ label, value }) => (
 					<div class="items-center flex-col text-center flex">
-						<h2 class="text-outline text-6xl lg:text-[7.50rem] leading-none font-semibold inline-block">
+						<h2 class="text-outline text-[clamp(2.375rem,5vw,5rem)] leading-none font-semibold inline-block">
 							{value}
 						</h2>
-						<div class="text-lg py-5 px-3.5 inline-block w-full -mt-3">
+						<div class="text-lg py-5 px-3.5 inline-block w-full text-white/75">
 							{label}
 						</div>
 					</div>
@@ -37,12 +36,12 @@ const { title, results } = Astro.props;
 			}
 		</div>
 	</div>
-</div>
+</section>
 
 <style>
 	.text-outline {
 		color: rgba(0, 0, 0, 0);
 		-webkit-text-stroke-width: 2px;
-		-webkit-text-stroke-color: black;
+		-webkit-text-stroke-color: white;
 	}
 </style>

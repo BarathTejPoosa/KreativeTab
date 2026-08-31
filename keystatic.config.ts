@@ -27,7 +27,7 @@ export default config({
 	},
 	ui: {
 		brand: {
-			name: "Your Company",
+			name: "KreativeTab",
 			mark: BrandMarkComponent,
 		},
 	},
@@ -496,6 +496,17 @@ export default config({
 										itemLabel: (props) => props.fields.title.value,
 									},
 								),
+								tunnelImages: fields.array(
+									fields.image({
+										label: "Image",
+										directory: "src/assets/pages",
+										publicPath: "/src/assets/pages/",
+									}),
+									{
+										label: "Tunnel Images",
+										description: "Optional custom images for the 3D tunnel background. If empty, the covers of the recent works will be used.",
+									}
+								),
 							},
 						}),
 						Testimonial: block({
@@ -833,3 +844,4 @@ export default config({
 		}),
 	},
 });
+

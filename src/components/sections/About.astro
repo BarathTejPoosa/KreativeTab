@@ -5,33 +5,28 @@ import about from "@/assets/pages/about/about.png";
 const { title, subtitle, content } = Astro.props;
 ---
 
-<div class="items-center flex-col text-sm font-medium relative w-full pb-40">
-	<div class="relative w-full h-[50em] overflow-hidden">
-		<div
-			class="items-center bottom-0 justify-center left-0 absolute top-0 flex w-full h-full overflow-hidden rounded-3xl"
-		>
-			<div
-				class="items-center bottom-0 flex-col justify-center left-0 absolute top-0 flex w-full"
-			>
-				<Image
-					src={about}
-					alt="About"
-					class="bottom-0 left-0 object-cover absolute top-0 align-middle inline-block w-full h-full max-w-full"
-				/>
-			</div>
+<section
+	data-cursor-theme="dark"
+	class="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-black text-white"
+>
+	<div class="mx-auto w-full max-w-[90rem] px-5 lg:px-10 py-24 lg:py-32">
+		<div class="relative w-full h-[50em] overflow-hidden mb-16">
+			<Image
+				src={about}
+				alt="About"
+				class="absolute inset-0 w-full h-full object-cover"
+			/>
 		</div>
-	</div>
-	<div class="mt-16 font-semibold">
-		<div
-			class="auto-cols-fr grid-cols-1 lg:grid-cols-[.6fr_1fr] grid-rows-[auto] grid gap-[1.88rem]"
-		>
-			<div class="col-span-1 row-span-1 text-[2.50rem] leading-none">
-				<div class="items-center flex"><div>{title}</div></div>
+		<div class="auto-cols-fr grid-cols-1 lg:grid-cols-[.6fr_1fr] grid-rows-[auto] grid gap-[1.88rem]">
+			<div class="col-span-1 row-span-1">
+				<h2 class="font-display text-[clamp(1.75rem,2.8vw,2.375rem)] font-semibold leading-tight text-white">
+					{title}
+				</h2>
 			</div>
-			<div class="col-span-1 row-span-1 text-3xl">
-				<p class="mb-3" set:html={subtitle} />
+			<div class="col-span-1 row-span-1 text-white/75 text-lg">
+				<p class="mb-4" set:html={subtitle} />
 				<p set:html={content} />
 			</div>
 		</div>
 	</div>
-</div>
+</section>

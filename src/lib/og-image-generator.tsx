@@ -89,7 +89,7 @@ const Template = (props: OgData) => (
  */
 const generateOgImage = async (
 	text: string = siteTitle,
-	author = "Your Company",
+	author = "KreativeTab",
 	date: Date = new Date(),
 	cover?: string,
 	logo?: string,

@@ -1,53 +1,22 @@
-# [Mizar](https://mizar.majestico.co)
+# KreativeTab
 
-<a href="https://astro.build/">![Astro](.github/images/astro-icon.png)</a>
-<a href="https://tailwindcss.com/">![Tailwind](.github/images/tailwind-icon.png)</a>
-<a href="https://alpinejs.dev/">![Alpine js](.github/images/alpine-icon.png)</a>
+KreativeTab’s multilingual agency website, built with Astro, Tailwind CSS, Markdoc and Keystatic.
 
-Mizar is a template made with [Astro](https://astro.build), [Tailwind](https://tailwindcss.com/) and [AlpineJS](https://alpinejs.dev/).
+## Local development
 
-This project was strongly inspired by a template found on Webflow which I can longer find, if you are the author please let me know so I can give you the credits.
+```sh
+npm install
+npm run dev
+```
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/majesticooss/mizar)
+The website runs at `http://localhost:4321`. The Keystatic content editor is available at `/keystatic`.
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/majesticooss/mizar)
+## Commands
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/majesticooss/mizar)
+- `npm run dev` — start the local development server
+- `npm run build` — create the production build
+- `npm run preview` — preview the production build
 
+## Content
 
-### [🧪 Site preview →](https://mizar.majestico.co)
-
-### [🧑‍🚀 Astro website →](https://astro.build/)
-
-### [🕮 Astro docs →](https://docs.astro.build/en/getting-started/)
-
----
-
-## Preview
-
-![Astros Preview](.github/images/screenshot.png)
-
-## 🧪 Test
-
-On the folder run
-
-1. `bun install`  <small>(or `yarn` or `pnpm i`)</small>
-2. `bun run dev`  <small>(or `yarn dev` or `pnpm dev`)</small>
-
-## ✅ Features
-
-- [x] Localization
-- [x] Blog
-- [x] CMS for editing blog post (thanks to Keystatic)
-- [x] PWA (thanks to vite-pwa)
-
-## ✍️ Admin dashboard
-
-You can access the admin dashboard for editing blog post at `/keystatic` 
-
-For more information follow Keystatic documentation at [https://keystatic.com/docs/introduction](https://keystatic.com/docs/introduction)
-
-
----
-
-<p align="right"><a href="https://majestico.co" target="_blank">majestico.co</p>
+Pages, case studies and insights live in `src/content`. Global navigation, footer, contact and SEO settings live in `src/content/global`.

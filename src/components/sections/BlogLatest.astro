@@ -29,17 +29,18 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<div class="text-sm font-medium pt-20 pb-32">
-	<div
-		class="items-center justify-center flex text-[3.13rem] leading-none font-semibold"
-	>
-		<h2 class="my-1">{title}</h2>
-	</div>
-	<div class="mt-16">
+<section
+	data-cursor-theme="dark"
+	class="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-black text-white"
+>
+	<div class="mx-auto w-full max-w-[90rem] px-5 lg:px-10 py-24 lg:py-32">
+		<h2 class="font-display text-[clamp(1.75rem,2.8vw,2.375rem)] font-semibold leading-tight text-white mb-16">
+			{title}
+		</h2>
 		<div
-			class="gap-x-[1.88rem] auto-cols-fr grid-cols-1 lg:grid-cols-3 grid-rows-[auto] gap-y-10 grid"
+			class="gap-x-[1.88rem] auto-cols-fr grid-cols-1 lg:grid-cols-3 grid-rows-[auto] gap-y-12 grid"
 		>
 			{recentPosts.map((post) => <BlogPreview {post} />)}
 		</div>
 	</div>
-</div>
+</section>

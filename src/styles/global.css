@@ -1,10 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
 
 :root {
 	--base-padding-x: 1rem;
 	--base-padding-y: 1rem;
+	--color-deep-blue: #000000;
+	--color-signal-blue: #000000;
+	--color-flare-green: #8be67d;
+	--color-ink: #0e1330;
+	--color-paper: #f8f7f3;
+	--color-charcoal: #2f393d;
 }
 
 @media (min-width: 1024px) {
@@ -14,9 +19,84 @@
 	}
 }
 
+@layer base {
 html {
 	scrollbar-gutter: stable;
+	scroll-behavior: smooth;
+	cursor: url("/brand/site-cursor-dark.svg") 3 3, auto;
 	@apply overflow-x-hidden;
+}
+
+body {
+	margin: 0;
+	background: var(--color-paper);
+	background-image:
+		linear-gradient(rgba(200, 200, 200, 0.15) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(200, 200, 200, 0.15) 1px, transparent 1px);
+	background-size: 40px 40px;
+	color: var(--color-ink);
+	font-family: "Inter", sans-serif;
+	font-size: 1rem;
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: var(--color-deep-blue);
+	font-family: "Plus Jakarta Sans", sans-serif;
+	font-weight: 700;
+	letter-spacing: -0.035em;
+}
+
+:focus-visible {
+	outline: 3px solid var(--color-flare-green);
+	outline-offset: 4px;
+}
+
+a,
+button,
+summary,
+label[for],
+select,
+input[type="button"],
+input[type="submit"],
+input[type="checkbox"],
+input[type="radio"],
+[role="button"],
+[role="link"],
+[onclick],
+.cursor-pointer,
+.button-primary {
+	cursor: url("/brand/site-pointer-dark.svg") 11 5, pointer !important;
+	-webkit-tap-highlight-color: transparent;
+}
+
+input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
+textarea,
+[contenteditable="true"] {
+	cursor: text;
+}
+}
+
+[data-cursor-theme="dark"] {
+	cursor: url("/brand/site-cursor.svg") 3 3, auto;
+}
+
+[data-cursor-theme="dark"] a,
+[data-cursor-theme="dark"] button,
+[data-cursor-theme="dark"] summary,
+[data-cursor-theme="dark"] label[for],
+[data-cursor-theme="dark"] [role="button"],
+[data-cursor-theme="dark"] [role="link"],
+[data-cursor-theme="dark"] [onclick],
+[data-cursor-theme="dark"] .cursor-pointer,
+[data-cursor-theme="dark"] .button-primary {
+	cursor: url("/brand/site-pointer.svg") 11 5, pointer !important;
 }
 
 
@@ -26,8 +106,8 @@ html {
 	background: black;
 }
 ::selection {
-	color: white;
-	background: black;
+	color: var(--color-ink);
+	background: var(--color-flare-green);
 }
 .dark ::-moz-selection {
 	color: white;
@@ -59,9 +139,32 @@ html {
 	background-color: transparent;
 }
 ::-webkit-scrollbar-thumb {
-	background-color: #000;
+	background-color: var(--color-deep-blue);
 	border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-	background-color: #000;
+	background-color: var(--color-signal-blue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
+	*, *::before, *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Scroll reveal animations for elements */
+@media (prefers-reduced-motion: no-preference) {
+	.js-enabled .reveal-target {
+		opacity: 0;
+		transform: translateY(35px);
+	}
+	.js-enabled .reveal-target.is-visible {
+		opacity: 1;
+		transform: translateY(0);
+		transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+	}
 }

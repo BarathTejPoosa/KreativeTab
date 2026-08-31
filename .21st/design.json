@@ -1,0 +1,19 @@
+{
+  "project": "KreativeTab",
+  "decisions": [
+    "Use flat colors only; no gradients.",
+    "Use black #000000 in place of the original blue for headings, links, highlights and brand surfaces.",
+    "Flare Green #8BE67D sparingly for CTAs and accents.",
+    "Ink #0E1330, Paper #F8F7F3, Charcoal #2F393D and white are the neutral palette.",
+    "Plus Jakarta Sans 600/700 for headings and Inter 400/500/600 for body copy.",
+    "Use the 9, 12, 16, 21, 28, 38, 51 and 67px type scale with fluid clamp sizing.",
+    "Favor spacious editorial layouts, visible proof and subtle purposeful motion.",
+    "Use a flat full-width editorial header with a thin divider; avoid floating card-style navigation.",
+    "Use a compact black editorial hero with no decorative grid, oversized icon or full-viewport height.",
+    "Use flat rectangular buttons with 44px minimum height, compact typography and no rounded corners.",
+    "Use the OriginKit hero-13 image tunnel as a full-screen, edge-to-edge Recent Works presentation powered by real portfolio covers.",
+    "Present services as a flat numbered editorial grid with small, consistently framed service icons.",
+    "Use the square KreativeTab logo cursor inside Recent Works, a compact monochrome arrow cursor across the website, and a matching custom monochrome hand cursor for clickable controls.",
+    "Use a compact flat footer with a Flare Green project CTA band above a structured black information and legal area."
+  ]
+}

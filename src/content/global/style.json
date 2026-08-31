@@ -1,9 +1,13 @@
 {
 	"theme": {
 		"colors": {
-			"primary": "#439db4",
-			"secondary": "#407492",
-			"tileColor": "#ffffff"
+			"primary": "#000000",
+			"secondary": "#000000",
+			"accent": "#8BE67D",
+			"ink": "#0E1330",
+			"paper": "#F8F7F3",
+			"charcoal": "#2F393D",
+			"tileColor": "#F8F7F3"
 		}
 	}
 }

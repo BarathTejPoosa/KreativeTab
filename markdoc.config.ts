@@ -91,6 +91,7 @@ export default defineMarkdocConfig({
 			attributes: {
 				title: { type: String, render: "title", required: true },
 				buttons: { type: Array, render: "buttons", required: true },
+				tunnelImages: { type: Array, render: "tunnelImages" },
 			},
 			render: component("./src/components/sections/RecentWork.astro"),
 		},

@@ -13,15 +13,8 @@ const Element = tag;
 
 <Element
 	id={id}
-	class:list={["container-base max-w-[90rem] mx-auto", className]}
+	class:list={["max-w-[90rem] mx-auto px-5 lg:px-10", className]}
 	{...rest}
 >
 	<slot />
 </Element>
-
-<style>
-	.container-base {
-		padding-left: var(--base-padding-x);
-		padding-right: var(--base-padding-x);
-	}
-</style>
