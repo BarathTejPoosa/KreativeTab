@@ -87,6 +87,28 @@ export default defineMarkdocConfig({
 			},
 			render: component("./src/components/sections/Services.astro"),
 		},
+		ServicesPage: {
+			attributes: {
+				eyebrow: { type: String, render: "eyebrow" },
+				title: { type: String, render: "title", required: true },
+				subtitle: { type: String, render: "subtitle" },
+				primaryLabel: { type: String, render: "primaryLabel" },
+				primaryLink: { type: String, render: "primaryLink" },
+				secondaryLabel: { type: String, render: "secondaryLabel" },
+				services: { type: Array, render: "services", required: true },
+				ticker: { type: Array, render: "ticker" },
+				processEyebrow: { type: String, render: "processEyebrow" },
+				processTitle: { type: String, render: "processTitle" },
+				steps: { type: Array, render: "steps" },
+				faqTitle: { type: String, render: "faqTitle" },
+				faqs: { type: Array, render: "faqs" },
+				ctaTitle: { type: String, render: "ctaTitle" },
+				ctaText: { type: String, render: "ctaText" },
+				ctaLabel: { type: String, render: "ctaLabel" },
+				ctaLink: { type: String, render: "ctaLink" },
+			},
+			render: component("./src/components/sections/ServicesPage.astro"),
+		},
 		RecentWork: {
 			attributes: {
 				title: { type: String, render: "title", required: true },

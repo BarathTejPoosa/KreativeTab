@@ -3,17 +3,25 @@ title: Services
 subtitle: Branding, Web Design and Product Design.
 type: informational
 lastUpdateDate: 2026-10-29
-hideTitle: false
+hideTitle: true
 seo:
   title: "Services: Branding, Web and Product Design | KreativeTab"
-  description: Branding (logos, identity, social and campaign posters, motion graphics), web design and build, and app and product UI/UX design.
+  description: "Branding (logos, identity, social and campaign posters, motion graphics), web design and build, and app and product UI/UX design."
   author: KreativeTab
 ---
 
-{% Container %}
-
-{% Services
-   title="Three services, done properly."
-   services=[{title: "Branding", description: "Logos and identity, social media and campaign posters, and animated motion graphics videos.", icon: "/src/assets/pages/homepage/marketing-service.png"}, {title: "Web Design", description: "Websites, designed and built. Fast, responsive and easy to update.", icon: "/src/assets/pages/homepage/socialmedia-service.png"}, {title: "Product Design", description: "App and product UI/UX, from product flows to polished screens.", icon: "/src/assets/pages/homepage/paidmedia-service.png"}] /%}
-
-{% /Container %}
+{% ServicesPage
+   eyebrow="Services"
+   title="Design that gets your brand noticed."
+   subtitle="Three services, one studio. We shape how your brand looks, how your website works and how your product feels."
+   primaryLabel="Start a project"
+   secondaryLabel="View our work"
+   services=[{title: "Branding", category: "Branding", pitch: "A clear, memorable identity and the visuals to use it everywhere, from your logo to social posts, campaigns and animated videos.", deliverables: ["Logo & identity", "Brand guidelines", "Social media posters", "Campaign posters", "Motion graphics videos"], image: "/src/assets/pages/services/branding.jpg", imageAlt: "Brand identity pieces: logo card, business card, posters and colour palette", linkLabel: "See branding work"}, {title: "Web Design", category: "Web", pitch: "Websites that look sharp, load fast and are easy to update. Designed and built by the same team.", deliverables: ["Website design", "Development", "CMS", "SEO-ready build"], image: "/src/assets/pages/services/web-design.jpg", imageAlt: "Responsive website shown on a browser, laptop and phone", linkLabel: "See web work"}, {title: "Product Design", category: "Product", pitch: "App and product interfaces that are simple to use, from the first user flow to a polished, ready-to-build design.", deliverables: ["UX flows", "Wireframes", "UI design", "Prototypes", "Design systems"], image: "/src/assets/pages/services/product-design.jpg", imageAlt: "Three app screens connected by a user flow", linkLabel: "See product work"}]
+   processEyebrow="How we work"
+   processTitle="A simple process, from first call to launch."
+   steps=[{title: "Discover", description: "We learn about your business, audience and goals, and agree the scope."}, {title: "Design", description: "We explore directions and design the first concepts."}, {title: "Refine", description: "We review together and polish every detail."}, {title: "Deliver", description: "You get final files, a live website or a ready-to-build product."}]
+   faqTitle="Good questions, short answers."
+   faqs=[{question: "Which services do you offer?", answer: "Branding, Web Design and Product Design. You can book one service or combine them."}, {question: "Do you shoot live-action video?", answer: "Not for now. Our videos are animated motion graphics, such as logo animations, social clips and campaign visuals."}, {question: "Can I update my website myself?", answer: "Yes. We can set it up with a simple CMS, so you can edit text, images and projects without code."}, {question: "Can you work with my existing brand?", answer: "Yes. We can refresh it, extend it to new posters and campaigns, or bring it to a website or app."}, {question: "How much does a project cost?", answer: "Every project is different, so we quote after a short call about your goals and scope."}, {question: "How do we get started?", answer: "Send us a message through the contact page with a few lines about your project, and we will take it from there."}]
+   ctaTitle="Have a project in mind?"
+   ctaText="Tell us what you are building. We will help you make it look and work great."
+   ctaLabel="Start a project" /%}

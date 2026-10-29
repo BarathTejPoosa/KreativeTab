@@ -281,6 +281,73 @@ const pageComponents = {
 								),
 							},
 						}),
+						ServicesPage: block({
+							label: "Services page (full)",
+							description: "Rich services page: hero, service blocks with visuals, ticker, process, FAQ and call to action",
+							icon: GeneralIcon({ ariaHidden: true }),
+							schema: {
+								eyebrow: fields.text({ label: "Eyebrow", defaultValue: "Services" }),
+								title: fields.text({ label: "Headline", validation: { isRequired: true } }),
+								subtitle: fields.text({ label: "Intro", multiline: true }),
+								primaryLabel: fields.text({ label: "Main button text", defaultValue: "Start a project" }),
+								primaryLink: fields.text({ label: "Main button link", defaultValue: "/contact" }),
+								secondaryLabel: fields.text({ label: "Second button text (links to Works)", defaultValue: "View our work" }),
+								services: fields.array(
+									fields.object({
+										title: fields.text({ label: "Service name", description: "Branding, Web Design or Product Design" }),
+										category: fields.select({
+											label: "Portfolio category for the 'See work' link",
+											options: [
+												{ label: "Branding", value: "Branding" },
+												{ label: "Social & Campaigns", value: "Social & Campaigns" },
+												{ label: "Motion", value: "Motion" },
+												{ label: "Web", value: "Web" },
+												{ label: "Product", value: "Product" },
+											],
+											defaultValue: "Branding",
+										}),
+										pitch: fields.text({ label: "Short pitch", multiline: true }),
+										deliverables: fields.array(fields.text({ label: "Deliverable" }), {
+											label: "Deliverables",
+											itemLabel: (props) => props.value,
+										}),
+										image: fields.image({
+											label: "Big visual (4:3 works best)",
+											directory: "src/assets/pages/services",
+											publicPath: "/src/assets/pages/services/",
+										}),
+										imageAlt: fields.text({ label: "Visual description (alt text)" }),
+										linkLabel: fields.text({ label: "Link text", defaultValue: "See work" }),
+									}),
+									{ label: "Services", itemLabel: (props) => props.fields.title.value },
+								),
+								ticker: fields.array(fields.text({ label: "Item" }), {
+									label: "Scrolling ticker (leave empty to use all deliverables)",
+									itemLabel: (props) => props.value,
+								}),
+								processEyebrow: fields.text({ label: "Process eyebrow", defaultValue: "How we work" }),
+								processTitle: fields.text({ label: "Process title" }),
+								steps: fields.array(
+									fields.object({
+										title: fields.text({ label: "Step" }),
+										description: fields.text({ label: "Description", multiline: true }),
+									}),
+									{ label: "Process steps", itemLabel: (props) => props.fields.title.value },
+								),
+								faqTitle: fields.text({ label: "FAQ title" }),
+								faqs: fields.array(
+									fields.object({
+										question: fields.text({ label: "Question" }),
+										answer: fields.text({ label: "Answer", multiline: true }),
+									}),
+									{ label: "FAQ", itemLabel: (props) => props.fields.question.value },
+								),
+								ctaTitle: fields.text({ label: "Call to action title" }),
+								ctaText: fields.text({ label: "Call to action text", multiline: true }),
+								ctaLabel: fields.text({ label: "Call to action button", defaultValue: "Start a project" }),
+								ctaLink: fields.text({ label: "Call to action link", defaultValue: "/contact" }),
+							},
+						}),
 						VideoEffect: block({
 							label: "VideoEffect",
 							description: "VideoEffect",

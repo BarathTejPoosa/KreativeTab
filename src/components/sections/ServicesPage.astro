@@ -1,0 +1,311 @@
+---
+import { Image } from "astro:assets";
+import { translatePath } from "@/lib/localization-helpers";
+import { defaultLocale } from "site";
+
+interface ServiceItem {
+	title: string;
+	category?: string;
+	pitch?: string;
+	deliverables?: string[];
+	image?: string;
+	imageAlt?: string;
+	linkLabel?: string;
+}
+
+interface Props {
+	eyebrow?: string;
+	title: string;
+	subtitle?: string;
+	primaryLabel?: string;
+	primaryLink?: string;
+	secondaryLabel?: string;
+	services: ServiceItem[];
+	ticker?: string[];
+	processEyebrow?: string;
+	processTitle?: string;
+	steps?: { title: string; description?: string }[];
+	faqTitle?: string;
+	faqs?: { question: string; answer: string }[];
+	ctaTitle?: string;
+	ctaText?: string;
+	ctaLabel?: string;
+	ctaLink?: string;
+}
+
+const {
+	eyebrow = "Services",
+	title,
+	subtitle,
+	primaryLabel,
+	primaryLink = "/contact",
+	secondaryLabel,
+	services = [],
+	ticker = [],
+	processEyebrow,
+	processTitle,
+	steps = [],
+	faqTitle,
+	faqs = [],
+	ctaTitle,
+	ctaText,
+	ctaLabel,
+	ctaLink = "/contact",
+} = Astro.props;
+
+const locale = Astro.currentLocale ?? defaultLocale;
+const it = locale === "it";
+const localize = (href: string) =>
+	href.startsWith("/") && !href.startsWith(`/${locale}/`) ? translatePath(locale, href) : href;
+const slugify = (s: string) =>
+	s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const pad = (n: number) => String(n + 1).padStart(2, "0");
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+	"/src/assets/pages/**/*.{webp,jpeg,jpg,png}",
+);
+const resolved = await Promise.all(
+	services.map(async (s) => (s.image && images[s.image] ? (await images[s.image]()).default : undefined)),
+);
+const tickerItems = ticker.length
+	? ticker
+	: services.flatMap((s) => s.deliverables ?? []);
+const faqSchema = faqs.length
+	? JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "FAQPage",
+			mainEntity: faqs.map((f) => ({
+				"@type": "Question",
+				name: f.question,
+				acceptedAnswer: { "@type": "Answer", text: f.answer },
+			})),
+		})
+	: "";
+const seeWork = it ? "Vedi i lavori" : "See work";
+const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
+---
+
+<div class="kt-services no-reveal">
+	{faqSchema && <script type="application/ld+json" is:inline set:html={faqSchema} />}
+	{/* Hero */}
+	<section
+		class="relative isolate overflow-hidden bg-black text-white"
+		data-cursor-theme="dark"
+	>
+		<div class="kt-grid pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+		<div class="kt-glow pointer-events-none absolute -right-40 -top-40 -z-10 h-[38rem] w-[38rem] rounded-full" aria-hidden="true"></div>
+		<div class="mx-auto w-full max-w-[90rem] px-5 pb-16 pt-36 lg:px-10 lg:pb-24 lg:pt-48">
+			<p class="m-0 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-flare">
+				<span class="h-2 w-2 rounded-full bg-brand-flare"></span>{eyebrow}
+			</p>
+			<h1
+				class="m-0 mt-6 max-w-5xl font-display text-[clamp(2.6rem,7vw,6.25rem)] font-semibold leading-[0.98] tracking-tight !text-white"
+				set:html={title}
+			/>
+			{subtitle && <p class="mb-0 mt-8 max-w-xl text-lg leading-relaxed text-white/65">{subtitle}</p>}
+			<div class="mt-10 flex flex-wrap gap-3">
+				{primaryLabel && (
+					<a href={localize(primaryLink)} class="group inline-flex items-center gap-2 rounded-full bg-brand-flare px-6 py-3 text-sm font-semibold text-black transition hover:bg-white">
+						{primaryLabel}<span class="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+					</a>
+				)}
+				{secondaryLabel && (
+					<a href={localize("/works")} class="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition hover:border-brand-flare hover:text-brand-flare">
+						{secondaryLabel}
+					</a>
+				)}
+			</div>
+
+			<nav class="mt-16 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-3" aria-label={eyebrow}>
+				{services.map((s, i) => (
+					<a href={`#${slugify(s.title)}`} class="group flex items-center justify-between gap-4 bg-black px-6 py-5 transition hover:bg-white/[0.04]">
+						<span class="flex items-baseline gap-4">
+							<span class="font-mono text-xs text-brand-flare">{pad(i)}</span>
+							<span class="text-lg font-semibold text-white">{s.title}</span>
+						</span>
+						<span class="text-white/40 transition group-hover:translate-y-0.5 group-hover:text-brand-flare" aria-hidden="true">↓</span>
+					</a>
+				))}
+			</nav>
+		</div>
+	</section>
+
+	{/* Ticker */}
+	{tickerItems.length > 0 && (
+		<div class="kt-ticker overflow-hidden border-y border-black bg-brand-flare py-4 text-black" aria-label={deliverablesLabel}>
+			<div class="kt-ticker-track flex w-max gap-10">
+				{[0, 1].map((copy) => (
+					<ul class="m-0 flex shrink-0 list-none items-center gap-10 p-0" aria-hidden={copy === 1 ? "true" : undefined}>
+						{tickerItems.map((t) => (
+							<li class="flex items-center gap-10 whitespace-nowrap font-display text-xl font-semibold uppercase tracking-wide lg:text-2xl">
+								{t}<span class="text-black/40" aria-hidden="true">✦</span>
+							</li>
+						))}
+					</ul>
+				))}
+			</div>
+		</div>
+	)}
+
+	{/* Service blocks */}
+	<div class="mx-auto w-full max-w-[90rem] px-5 py-20 lg:px-10 lg:py-32">
+		<div class="flex flex-col gap-20 lg:gap-32">
+			{services.map((s, i) => {
+				const img = resolved[i];
+				const flip = i % 2 === 1;
+				const href = s.category
+					? `${localize("/works")}?category=${encodeURIComponent(s.category)}`
+					: localize("/works");
+				return (
+					<section id={slugify(s.title)} class="scroll-mt-28 grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
+						<a
+							href={href}
+							class:list={["kt-visual group relative block overflow-hidden rounded-3xl bg-black lg:col-span-7", flip && "lg:order-2"]}
+							aria-label={`${seeWork}: ${s.title}`}
+						>
+							{img ? (
+								<Image src={img} alt={s.imageAlt ?? s.title} widths={[640, 1000, 1400]} sizes="(min-width: 1024px) 58vw, 100vw" class="aspect-[4/3] h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]" />
+							) : (
+								<div class="aspect-[4/3] w-full kt-grid" />
+							)}
+							<span class="absolute left-5 top-5 rounded-full bg-black/70 px-3 py-1 font-mono text-xs text-brand-flare backdrop-blur">{pad(i)}</span>
+							<span class="absolute bottom-5 right-5 inline-flex h-12 w-12 translate-y-2 items-center justify-center rounded-full bg-brand-flare text-lg text-black opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100" aria-hidden="true">↗</span>
+						</a>
+						<div class:list={["lg:col-span-5", flip && "lg:order-1"]}>
+							<p class="m-0 font-mono text-sm text-black/50">{pad(i)} / {pad(services.length - 1)}</p>
+							<h2 class="m-0 mt-3 font-display text-[clamp(2.25rem,4.5vw,4rem)] font-semibold leading-[1] tracking-tight">{s.title}</h2>
+							{s.pitch && <p class="mb-0 mt-6 max-w-md text-lg leading-relaxed text-black/70">{s.pitch}</p>}
+							{s.deliverables && s.deliverables.length > 0 && (
+								<>
+									<p class="mb-0 mt-8 text-xs font-semibold uppercase tracking-[0.2em] text-black/50">{deliverablesLabel}</p>
+									<ul class="m-0 mt-4 grid list-none gap-x-6 p-0 sm:grid-cols-2">
+										{s.deliverables.map((d) => (
+											<li class="flex items-center gap-3 border-b border-black/10 py-3 text-base font-medium">
+												<span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-black text-[0.65rem] text-brand-flare" aria-hidden="true">✓</span>
+												{d}
+											</li>
+										))}
+									</ul>
+								</>
+							)}
+							<a href={href} class="group mt-8 inline-flex items-center gap-3 rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-flare hover:text-black">
+								{s.linkLabel || seeWork}
+								<span class="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+							</a>
+						</div>
+					</section>
+				);
+			})}
+		</div>
+	</div>
+
+	{/* Process */}
+	{steps.length > 0 && (
+		<section class="relative overflow-hidden bg-black py-20 text-white lg:py-32" data-cursor-theme="dark">
+			<div class="mx-auto w-full max-w-[90rem] px-5 lg:px-10">
+				{processEyebrow && <p class="m-0 text-xs font-semibold uppercase tracking-[0.2em] text-brand-flare">{processEyebrow}</p>}
+				{processTitle && <h2 class="m-0 mt-6 max-w-3xl font-display text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-tight !text-white">{processTitle}</h2>}
+				<ol class="m-0 mt-14 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
+					{steps.map((step, i) => (
+						<li class="group relative rounded-2xl border border-white/10 p-7 transition duration-300 hover:-translate-y-1 hover:border-brand-flare/60 hover:bg-white/[0.03]">
+							<div class="flex items-center gap-3">
+								<span class="flex h-10 w-10 items-center justify-center rounded-full border border-brand-flare/50 font-mono text-sm text-brand-flare transition group-hover:bg-brand-flare group-hover:text-black">{pad(i)}</span>
+								<span class="h-px flex-1 bg-white/10" aria-hidden="true"></span>
+							</div>
+							<h3 class="m-0 mt-8 text-2xl font-semibold !text-white">{step.title}</h3>
+							{step.description && <p class="mb-0 mt-3 text-base leading-relaxed text-white/60">{step.description}</p>}
+						</li>
+					))}
+				</ol>
+			</div>
+		</section>
+	)}
+
+	{/* FAQ */}
+	{faqs.length > 0 && (
+		<section class="mx-auto grid w-full max-w-[90rem] gap-10 px-5 py-20 lg:grid-cols-12 lg:px-10 lg:py-32">
+			<div class="lg:col-span-4">
+				<p class="m-0 text-xs font-semibold uppercase tracking-[0.2em] text-black/50">FAQ</p>
+				{faqTitle && <h2 class="m-0 mt-6 font-display text-[clamp(2rem,3.5vw,3rem)] font-semibold leading-[1.05] tracking-tight">{faqTitle}</h2>}
+			</div>
+			<div class="lg:col-span-8">
+				{faqs.map((f, i) => (
+					<details class="kt-faq group border-b border-black/15" open={i === 0}>
+						<summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-semibold lg:text-xl">
+							{f.question}
+							<span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/20 text-xl transition group-open:rotate-45 group-open:border-black group-open:bg-black group-open:text-brand-flare" aria-hidden="true">+</span>
+						</summary>
+						<p class="mb-0 mt-0 max-w-2xl pb-6 text-base leading-relaxed text-black/70">{f.answer}</p>
+					</details>
+				))}
+			</div>
+		</section>
+	)}
+
+	{/* CTA */}
+	{ctaTitle && (
+		<section class="px-5 pb-20 lg:px-10 lg:pb-28">
+			<div class="relative mx-auto max-w-[90rem] overflow-hidden rounded-[2rem] bg-black px-6 py-16 text-white" data-cursor-theme="dark sm:px-12 lg:px-20 lg:py-24">
+				<div class="kt-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+				<div class="kt-glow pointer-events-none absolute -bottom-48 -left-24 h-[30rem] w-[30rem] rounded-full" aria-hidden="true"></div>
+				<div class="relative flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+					<div>
+						<h2 class="m-0 max-w-3xl font-display text-[clamp(2.25rem,5.5vw,5rem)] font-semibold leading-[0.98] tracking-tight !text-white">{ctaTitle}</h2>
+						{ctaText && <p class="mb-0 mt-6 max-w-lg text-lg text-white/65">{ctaText}</p>}
+					</div>
+					{ctaLabel && (
+						<a href={localize(ctaLink)} class="group inline-flex shrink-0 items-center gap-3 self-start rounded-full bg-brand-flare px-8 py-4 text-base font-semibold text-black transition hover:scale-[1.03] hover:bg-white lg:self-auto">
+							{ctaLabel}<span class="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+						</a>
+					)}
+				</div>
+			</div>
+		</section>
+	)}
+</div>
+
+<style>
+	.kt-grid {
+		background-image:
+			linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+		background-size: 56px 56px;
+		mask-image: radial-gradient(ellipse at 70% 30%, black 20%, transparent 75%);
+	}
+	.kt-grid-dark {
+		background-image:
+			linear-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(0, 0, 0, 0.07) 1px, transparent 1px);
+		background-size: 48px 48px;
+	}
+	.kt-glow {
+		background: radial-gradient(circle, rgba(139, 230, 125, 0.35), transparent 65%);
+		filter: blur(20px);
+		animation: kt-float 12s ease-in-out infinite alternate;
+	}
+	.kt-ticker-track {
+		animation: kt-marquee 40s linear infinite;
+	}
+	.kt-ticker:hover .kt-ticker-track {
+		animation-play-state: paused;
+	}
+	.kt-faq summary::-webkit-details-marker {
+		display: none;
+	}
+	@keyframes kt-marquee {
+		to {
+			transform: translateX(calc(-50% - 1.25rem));
+		}
+	}
+	@keyframes kt-float {
+		to {
+			transform: translate(-60px, 60px) scale(1.1);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.kt-ticker-track,
+		.kt-glow {
+			animation: none;
+		}
+	}
+</style>

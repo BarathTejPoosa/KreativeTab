@@ -3,17 +3,25 @@ title: Servizi
 subtitle: Branding, Web Design e Product Design.
 type: informational
 lastUpdateDate: 2026-10-29
-hideTitle: false
+hideTitle: true
 seo:
   title: "Servizi: Branding, Web e Product Design | KreativeTab"
-  description: Branding (logo, identità, poster social e di campagna, motion graphics), web design e sviluppo, UI/UX per app e prodotti.
+  description: "Branding (logo, identità, poster social e di campagna, motion graphics), web design e sviluppo, UI/UX per app e prodotti."
   author: KreativeTab
 ---
 
-{% Container %}
-
-{% Services
-   title="Tre servizi, fatti bene."
-   services=[{title: "Branding", description: "Logo e identità visiva, post e poster per social e campagne, video in motion graphics animati.", icon: "/src/assets/pages/homepage/marketing-service.png"}, {title: "Web Design", description: "Siti web progettati e sviluppati. Veloci, responsive e facili da aggiornare.", icon: "/src/assets/pages/homepage/socialmedia-service.png"}, {title: "Product Design", description: "UI/UX per app e prodotti digitali, dai flussi alle schermate finali.", icon: "/src/assets/pages/homepage/paidmedia-service.png"}] /%}
-
-{% /Container %}
+{% ServicesPage
+   eyebrow="Servizi"
+   title="Design che fa notare il tuo brand."
+   subtitle="Tre servizi, un solo studio. Diamo forma all'aspetto del tuo brand, al funzionamento del tuo sito e all'esperienza del tuo prodotto."
+   primaryLabel="Inizia un progetto"
+   secondaryLabel="Guarda i lavori"
+   services=[{title: "Branding", category: "Branding", pitch: "Un'identità chiara e memorabile, e i visual per usarla ovunque: dal logo ai post social, alle campagne e ai video animati.", deliverables: ["Logo e identità", "Linee guida del brand", "Poster per social media", "Poster di campagna", "Video in motion graphics"], image: "/src/assets/pages/services/branding.jpg", imageAlt: "Elementi di identità visiva: logo, biglietto da visita, poster e palette colori", linkLabel: "Vedi i lavori di branding"}, {title: "Web Design", category: "Web", pitch: "Siti web curati, veloci e facili da aggiornare. Progettati e sviluppati dallo stesso team.", deliverables: ["Design del sito", "Sviluppo", "CMS", "Build pronta per la SEO"], image: "/src/assets/pages/services/web-design.jpg", imageAlt: "Sito responsive mostrato su browser, laptop e telefono", linkLabel: "Vedi i lavori web"}, {title: "Product Design", category: "Product", pitch: "Interfacce per app e prodotti semplici da usare, dal primo flusso utente a un design rifinito e pronto per lo sviluppo.", deliverables: ["Flussi UX", "Wireframe", "UI design", "Prototipi", "Design system"], image: "/src/assets/pages/services/product-design.jpg", imageAlt: "Tre schermate di app collegate da un flusso utente", linkLabel: "Vedi i lavori di prodotto"}]
+   processEyebrow="Come lavoriamo"
+   processTitle="Un processo semplice, dalla prima call al lancio."
+   steps=[{title: "Scoperta", description: "Conosciamo la tua attività, il pubblico e gli obiettivi, e definiamo il perimetro."}, {title: "Design", description: "Esploriamo diverse direzioni e progettiamo i primi concept."}, {title: "Rifinitura", description: "Rivediamo insieme e curiamo ogni dettaglio."}, {title: "Consegna", description: "Ricevi i file finali, un sito online o un prodotto pronto per lo sviluppo."}]
+   faqTitle="Buone domande, risposte brevi."
+   faqs=[{question: "Quali servizi offrite?", answer: "Branding, Web Design e Product Design. Puoi scegliere un servizio o combinarli."}, {question: "Fate riprese video dal vivo?", answer: "Per ora no. I nostri video sono motion graphics animate, come animazioni del logo, clip social e visual di campagna."}, {question: "Posso aggiornare il sito da solo?", answer: "Sì. Possiamo configurarlo con un CMS semplice, così modifichi testi, immagini e progetti senza codice."}, {question: "Potete lavorare con il mio brand attuale?", answer: "Sì. Possiamo rinnovarlo, estenderlo a nuovi poster e campagne, o portarlo su un sito o un'app."}, {question: "Quanto costa un progetto?", answer: "Ogni progetto è diverso, quindi facciamo un preventivo dopo una breve call su obiettivi e perimetro."}, {question: "Come iniziamo?", answer: "Scrivici dalla pagina contatti con qualche riga sul tuo progetto, al resto pensiamo noi."}]
+   ctaTitle="Hai un progetto in mente?"
+   ctaText="Raccontaci cosa stai costruendo. Ti aiutiamo a farlo apparire e funzionare al meglio."
+   ctaLabel="Inizia un progetto" /%}
