@@ -54,35 +54,51 @@ const postsCollection = defineCollection({
 		}),
 });
 
-/** Portfolio items. URL: /work/<slug> */
+/** Portfolio items (Behance-style). URL: /work/<slug> */
 const worksCollection = defineCollection({
-	schema: ({ image }) =>
-		z.object({
+	schema: ({ image }) => {
+		const caption = optionalText;
+		const block = z.discriminatedUnion("discriminant", [
+			z.object({
+				discriminant: z.literal("image"),
+				value: z.object({ image: image(), alt: optionalText, caption }),
+			}),
+			z.object({
+				discriminant: z.literal("imagePair"),
+				value: z.object({
+					left: image(),
+					leftAlt: optionalText,
+					right: image(),
+					rightAlt: optionalText,
+					caption,
+				}),
+			}),
+			z.object({
+				discriminant: z.literal("video"),
+				value: z.object({ url: optionalText, file: optionalText, caption }),
+			}),
+			z.object({
+				discriminant: z.literal("text"),
+				value: z.object({ text: z.string() }),
+			}),
+		]);
+		return z.object({
 			title: z.string(),
 			client: optionalText,
 			category: optionalText,
-			pubDate: z.date(),
-			lastUpdateDate: z.date(),
+			tags: z.array(z.string()).default([]),
+			year: z.number().int(),
 			cover: image(),
 			coverAlt: optionalText,
-			gallery: z
-				.array(
-					z.object({
-						image: image(),
-						alt: optionalText,
-						caption: optionalText,
-					}),
-				)
-				.default([]),
-			video: optionalText,
-			description: z.string(),
-			featured: z.boolean().default(false),
+			intro: optionalText,
+			blocks: z.array(block).default([]),
 			link: optionalText,
-			tags: z.array(z.string()).default([]),
+			featured: z.boolean().default(false),
 			hidden: z.optional(z.boolean()),
 			example: z.boolean().default(false),
 			seo: seoOverrides,
-		}),
+		});
+	},
 });
 
 const servicesCollection = defineCollection({

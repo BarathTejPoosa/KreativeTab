@@ -6,5 +6,20 @@
 			"text": "Start a project",
 			"url": "/contact"
 		}
+	],
+	"tagline": "Creative studio for branding, web design and product design.",
+	"services": [
+		{
+			"title": "Branding",
+			"link": "/services"
+		},
+		{
+			"title": "Web Design",
+			"link": "/services"
+		},
+		{
+			"title": "Product Design",
+			"link": "/services"
+		}
 	]
 }

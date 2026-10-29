@@ -9,6 +9,10 @@ const currentLocale = Astro.currentLocale;
 const { contacts } = getLocalizedSettings(currentLocale);
 
 const currentPage = Astro.url;
+const t =
+	currentLocale === "it"
+		? { share: "Condividi", email: "Scrivici", top: "Torna all'inizio", thanks: "Grazie per la condivisione!", subject: "Guarda questo progetto" }
+		: { share: "Share", email: "Email us", top: "Back to top", thanks: "Thanks for sharing!", subject: "Take a look at this" };
 
 const availableShare = [
 	{
@@ -29,7 +33,7 @@ const availableShare = [
 	{
 		name: "Email",
 		icon: "ic:baseline-email",
-		url: `mailto:?subject=Check%20out%20this%20article&body=${currentPage}`,
+		url: `mailto:?subject=${encodeURIComponent(t.subject)}&body=${currentPage}`,
 	},
 ];
 ---
@@ -41,11 +45,11 @@ const availableShare = [
 				if (navigator.share) {
 					navigator
 						.share({
-							title: "Condividi",
+							title: ${JSON.stringify(t.share)},
 							url: window.location.href,
 						})
 						.then(() => {
-							console.log("Grazie per la condivisione!");
+							console.log(${JSON.stringify(t.thanks)});
 						})
 						.catch(console.error);
 				} else {
@@ -63,7 +67,7 @@ const availableShare = [
 		@click="openSocialModal()"
 	>
 		<Icon size={22} name="ic:outline-share" />
-		<span>Condividi</span>
+		<span>{t.share}</span>
 	</Button>
 
 	<Link
@@ -73,12 +77,12 @@ const availableShare = [
 		style="outline"
 	>
 		<Icon size={23} name="ic:outline-mail" />
-		<span class="hidden sm:inline-block">Scrivici</span>
+		<span class="hidden sm:inline-block">{t.email}</span>
 	</Link>
 
 	<Link class="flex gap-3" href="#top" size="md" style="outline">
 		<Icon size={23} name="ic:sharp-vertical-align-top" />
-		<span class="hidden sm:inline-block">Torna all'inizio</span>
+		<span class="hidden sm:inline-block">{t.top}</span>
 	</Link>
 
 	<template x-teleport="body">
@@ -111,7 +115,7 @@ const availableShare = [
 				class="relative w-full bg-white px-7 py-6 sm:max-w-lg sm:rounded-lg"
 			>
 				<div class="flex items-center justify-between pb-2">
-					<h3 class="text-lg font-semibold">Condividi</h3>
+					<h3 class="text-lg font-semibold">{t.share}</h3>
 					<button
 						@click="modalOpen=false"
 						class="absolute right-0 top-0 mr-5 mt-5 flex h-8 w-8 items-center justify-center rounded-full text-gray-600 hover:bg-gray-50 hover:text-gray-800"

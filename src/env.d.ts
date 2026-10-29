@@ -29,6 +29,8 @@ declare global {
 
 	interface FooterSettings {
 		title: string;
+		tagline?: string;
+		services?: { title: string; link: string }[];
 		copyright: string;
 		buttons: {
 			text: string;

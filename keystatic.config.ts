@@ -258,13 +258,14 @@ const pageComponents = {
 							schema: {
 								title: fields.text({
 									label: "Title",
+									defaultValue: "Three services, done properly.",
 									validation: {
 										isRequired: true,
 									},
 								}),
 								services: fields.array(
 									fields.object({
-										title: fields.text({ label: "Title" }),
+										title: fields.text({ label: "Title", description: "Branding, Web Design or Product Design" }),
 										description: fields.text({ label: "Description", multiline: true }),
 										icon: fields.image({
 											label: "Icon",
@@ -551,13 +552,33 @@ const pagesCollection = (locale: LocaleKey, prefix: string) =>
 		},
 	});
 
+/** Categories used for the portfolio filter chips on /works. */
+const workCategories = [
+	"Branding",
+	"Social & Campaigns",
+	"Motion",
+	"Web",
+	"Product",
+] as const;
+
+const workImage = (label = "Image") =>
+	fields.image({
+		label,
+		directory: "src/assets/works",
+		publicPath: "@/assets/works/",
+		validation: { isRequired: true },
+	});
+
+const workCaption = () =>
+	fields.text({ label: "Caption (optional)", description: "One short line shown under the media." });
+
 const worksCollection = (locale: LocaleKey, prefix: string) =>
 	collection({
 		label: `${prefix}Portfolio`,
 		slugField: "title",
 		path: `src/content/works/${locale}/*`,
-		entryLayout: "content",
-		columns: ["title", "client", "category", "pubDate"],
+		entryLayout: "form",
+		columns: ["title", "client", "category", "year"],
 		previewUrl: locale === "en" ? "/work/{slug}" : `/${locale}/work/{slug}`,
 		format: { contentField: "content" },
 		schema: {
@@ -571,70 +592,94 @@ const worksCollection = (locale: LocaleKey, prefix: string) =>
 					description: "The project address, e.g. /work/my-project. Avoid changing it after publishing.",
 				},
 			}),
-			client: fields.text({ label: "Client", description: "Client or brand name" }),
+			client: fields.text({ label: "Client", description: "Client or brand name (optional)" }),
 			category: fields.select({
 				label: "Category",
-				options: [
-					{ label: "Branding", value: "Branding" },
-					{ label: "Web design & build", value: "Web design & build" },
-					{ label: "UI/UX & product", value: "UI/UX & product" },
-					{ label: "Social & content", value: "Social & content" },
-					{ label: "Marketing & ads", value: "Marketing & ads" },
-					{ label: "SEO", value: "SEO" },
-					{ label: "Other", value: "Other" },
-				],
-				defaultValue: "Web design & build",
+				description: "Used for the filter chips on the Works page.",
+				options: workCategories.map((value) => ({ label: value, value })),
+				defaultValue: "Branding",
 			}),
-			description: fields.text({
-				label: "Short description",
-				description: "One or two sentences. Shown on the project page and used for SEO.",
-				multiline: true,
-				validation: { isRequired: true },
+			tags: fields.array(fields.text({ label: "Tag" }), {
+				label: "Tags",
+				description: "Services or tools, e.g. Logo, Identity, Figma.",
+				itemLabel: (props) => props.value,
 			}),
-			featured: fields.checkbox({
-				label: "Featured",
-				description: "Featured projects appear first on the home page.",
-				defaultValue: false,
+			year: fields.integer({
+				label: "Year",
+				defaultValue: new Date().getFullYear(),
+				validation: { isRequired: true, min: 2000, max: 2100 },
 			}),
 			cover: fields.image({
 				label: "Cover image",
-				description: "Main image (landscape works best, at least 1600px wide).",
+				description: "Shown on the Works grid as a 4:3 tile (at least 1600×1200 works best).",
 				directory: "src/assets/works",
 				publicPath: "@/assets/works/",
 				validation: { isRequired: true },
 			}),
 			coverAlt: altText("Cover image alt text"),
-			gallery: fields.array(
-				fields.object({
-					image: fields.image({
-						label: "Image",
-						directory: "src/assets/works",
-						publicPath: "@/assets/works/",
-						validation: { isRequired: true },
-					}),
-					alt: altText(),
-					caption: fields.text({ label: "Caption (optional)" }),
-				}),
+			intro: fields.text({
+				label: "Intro (optional)",
+				description: "One short paragraph shown above the images. Also used as the Google description.",
+				multiline: true,
+				validation: { length: { max: 400 } },
+			}),
+			blocks: fields.blocks(
 				{
-					label: "Gallery",
-					description: "Extra project images shown under the case study.",
-					itemLabel: (props) => props.fields.alt.value || props.fields.caption.value || "Image",
+					image: {
+						label: "Image (full width)",
+						itemLabel: (props) => props.fields.alt.value || props.fields.caption.value || "Image",
+						schema: fields.object({
+							image: workImage(),
+							alt: altText(),
+							caption: workCaption(),
+						}),
+					},
+					imagePair: {
+						label: "Two images side by side",
+						itemLabel: (props) => props.fields.caption.value || "Image pair",
+						schema: fields.object({
+							left: workImage("Left image"),
+							leftAlt: altText("Left image alt text"),
+							right: workImage("Right image"),
+							rightAlt: altText("Right image alt text"),
+							caption: workCaption(),
+						}),
+					},
+					video: {
+						label: "Video",
+						itemLabel: (props) => props.fields.caption.value || props.fields.url.value || "Video",
+						schema: fields.object({
+							url: fields.text({
+								label: "Video link",
+								description:
+									"A YouTube or Vimeo link, or a direct .mp4 link. Leave empty if you upload a file below.",
+							}),
+							file: fields.file({
+								label: "…or upload an .mp4 (keep it under ~20 MB)",
+								directory: "public/videos/works",
+								publicPath: "/videos/works/",
+							}),
+							caption: workCaption(),
+						}),
+					},
+					text: {
+						label: "Text",
+						itemLabel: (props) => props.fields.text.value.slice(0, 40) || "Text",
+						schema: fields.object({
+							text: fields.text({ label: "Text", multiline: true, validation: { isRequired: true } }),
+						}),
+					},
+				},
+				{
+					label: "Content blocks",
+					description: "The project itself: add images, image pairs, videos and short text, in order.",
 				},
 			),
 			link: fields.url({ label: "Live project link (optional)" }),
-			tags: fields.array(fields.text({ label: "Tag" }), {
-				label: "Tags / services delivered",
-				itemLabel: (props) => props.value,
-			}),
-			pubDate: fields.date({
-				label: "Project date",
-				defaultValue: { kind: "today" },
-				validation: { isRequired: true },
-			}),
-			lastUpdateDate: fields.date({
-				label: "Last updated",
-				defaultValue: { kind: "today" },
-				validation: { isRequired: true },
+			featured: fields.checkbox({
+				label: "Featured",
+				description: "Featured projects appear first on the Works page and the home page.",
+				defaultValue: false,
 			}),
 			hidden: fields.checkbox({ label: "Hidden (draft)", defaultValue: false }),
 			example: fields.checkbox({
@@ -643,7 +688,7 @@ const worksCollection = (locale: LocaleKey, prefix: string) =>
 				defaultValue: false,
 			}),
 			seo: seoFields("project"),
-			content: markdocBody("src/assets/works"),
+			content: fields.emptyContent({ extension: "mdoc" }),
 		},
 	});
 
@@ -749,6 +794,19 @@ const footerSingleton = (locale: LocaleKey, prefix: string) =>
 		format: { data: "json" },
 		schema: {
 			title: fields.text({ label: "Headline", description: "You can use <br/> for a line break." }),
+			tagline: fields.text({
+				label: "Tagline",
+				description: "Short line under the logo.",
+				multiline: true,
+				defaultValue: "Creative studio for branding, web design and product design.",
+			}),
+			services: fields.array(
+				fields.object({
+					title: fields.text({ label: "Service" }),
+					link: fields.text({ label: "Link", defaultValue: "/services" }),
+				}),
+				{ label: "Services column", itemLabel: (props) => props.fields.title.value },
+			),
 			copyright: fields.text({ label: "Copyright" }),
 			buttons: fields.array(
 				fields.object({

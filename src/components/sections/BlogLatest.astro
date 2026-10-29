@@ -15,19 +15,22 @@ const recentPosts = posts
 			slug: post.slug.startsWith("/") ? post.slug : `/${post.slug}`,
 		};
 	})
-	.filter((post) => post.lang === currentLocale)
+	.filter((post) => post.lang === currentLocale && !post.data.hidden && !post.data.example)
 	.sort(
 		(a, b) =>
-			a.data.lastUpdateDate.getTime() - b.data.lastUpdateDate.getTime(),
+			b.data.lastUpdateDate.getTime() - a.data.lastUpdateDate.getTime(),
 	)
-	.slice(0, 4) as CollectionEntry<"posts">[];
+	.slice(0, 3) as CollectionEntry<"posts">[];
 
 interface Props {
 	title: string;
 }
 
 const { title } = Astro.props;
+// Example (placeholder) posts never show on the homepage; the section hides until a real post exists.
 ---
+
+{recentPosts.length > 0 && (
 
 <section
 	data-cursor-theme="dark"
@@ -44,3 +47,4 @@ const { title } = Astro.props;
 		</div>
 	</div>
 </section>
+)}

@@ -37,16 +37,27 @@ function getTranslatedUrl(locale: string): string {
 	<div data-cursor-theme="dark" class="py-14 lg:py-20">
 		<Container>
 			<div class="grid gap-12 border-b border-white/15 pb-14 md:grid-cols-2 lg:grid-cols-12 lg:pb-20">
-				<div class="lg:col-span-5">
+				<div class="lg:col-span-4">
 					<a href={translatePath(currentLocale, "/")} aria-label="KreativeTab home" class="inline-block">
 						<img src="/brand/kreativetab-logo.svg" alt="KreativeTab" class="h-6 w-auto invert" />
 					</a>
 					<p class="mt-6 max-w-sm text-base leading-relaxed text-white/55">
-						Strategy, design and technology brought together to create brands and digital experiences that move businesses forward.
+						{footer.tagline ?? "Creative studio for branding, web design and product design."}
 					</p>
 				</div>
 
-				<nav class="lg:col-span-3 lg:col-start-7" aria-label="Footer navigation">
+				{footer.services && footer.services.length > 0 && (
+					<div class="lg:col-span-3">
+						<p class="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-white/45">{currentLocale === "it" ? "Servizi" : "Services"}</p>
+						<ul class="space-y-3">
+							{footer.services.map((service) => (
+								<li><a href={translatePath(currentLocale, service.link || "/services")} class="text-sm font-medium text-white/75 transition-colors hover:text-brand-flare">{service.title}</a></li>
+							))}
+						</ul>
+					</div>
+				)}
+
+				<nav class="lg:col-span-2" aria-label="Footer navigation">
 					<p class="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-white/45">Explore</p>
 					<ul class="space-y-3">
 						{header.pages.map((page) => (

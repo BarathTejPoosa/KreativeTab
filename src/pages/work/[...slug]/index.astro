@@ -12,9 +12,6 @@ export async function getStaticPaths() {
 }
 
 const { data: work } = Astro.props;
-const { Content } = await work.render();
 ---
 
-<WorkLayout frontmatter={work}>
-	<Content />
-</WorkLayout>
+<WorkLayout frontmatter={work} />

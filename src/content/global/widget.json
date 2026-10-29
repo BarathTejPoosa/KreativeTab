@@ -1,5 +1,5 @@
 {
   "enabled": true,
   "icon": "mdi:whatsapp",
-  "link": "https://api.whatsapp.com/send?phone= +447733381778"
+  "link": "https://api.whatsapp.com/send?phone=447733381778"
 }

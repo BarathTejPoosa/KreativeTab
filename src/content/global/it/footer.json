@@ -6,5 +6,20 @@
 			"text": "Contattaci",
 			"url": "/contact"
 		}
+	],
+	"tagline": "Studio creativo per branding, web design e product design.",
+	"services": [
+		{
+			"title": "Branding",
+			"link": "/services"
+		},
+		{
+			"title": "Web Design",
+			"link": "/services"
+		},
+		{
+			"title": "Product Design",
+			"link": "/services"
+		}
 	]
 }

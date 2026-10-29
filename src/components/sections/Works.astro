@@ -6,9 +6,20 @@ import { absoluteUrl, jsonLdString, withTrailingSlash } from "@/lib/seo";
 import { defaultLocale } from "site.config";
 
 const currentLocale = Astro.currentLocale ?? defaultLocale;
+const labels: Record<string, { all: string; filter: string; empty: string }> = {
+	en: { all: "All", filter: "Filter projects by category", empty: "No projects in this category yet." },
+	it: { all: "Tutti", filter: "Filtra i progetti per categoria", empty: "Nessun progetto in questa categoria." },
+};
+const l = labels[currentLocale] ?? labels.en;
 
-// Featured portfolio items first, then newest
+// Featured first, then newest
 const allWorks = await getSortedWorks(currentLocale);
+
+// Filter chips come from the categories actually used in the CMS
+const categoryOrder = ["Branding", "Social & Campaigns", "Motion", "Web", "Product"];
+const categories = [...new Set(allWorks.map((work) => work.data.category ?? "Branding"))].sort(
+	(a, b) => (categoryOrder.indexOf(a) + 1 || 99) - (categoryOrder.indexOf(b) + 1 || 99),
+);
 
 const itemList = {
 	"@context": "https://schema.org",
@@ -24,9 +35,93 @@ const itemList = {
 };
 ---
 
-<div
-	class="text-sm font-medium auto-cols-fr grid-cols-1 md:grid-cols-2 grid-rows-[auto] grid gap-9 pb-40"
->
-	{allWorks.map((work) => <WorkPreview {work} />)}
+<div class="works-gallery no-reveal pb-32" data-works-gallery>
+	{
+		categories.length > 1 && (
+			<div role="group" aria-label={l.filter} class="mb-8 flex flex-wrap gap-2">
+				<button type="button" class="chip" data-filter="all" aria-pressed="true">
+					{l.all}
+				</button>
+				{categories.map((category) => (
+					<button type="button" class="chip" data-filter={category} aria-pressed="false">
+						{category}
+					</button>
+				))}
+			</div>
+		)
+	}
+	<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+		{allWorks.map((work, index) => <WorkPreview work={work} eager={index < 3} />)}
+	</div>
+	<p class="hidden py-16 text-center text-neutral-500" data-empty>{l.empty}</p>
 </div>
 <script type="application/ld+json" is:inline set:html={jsonLdString(itemList)} />
+
+<style>
+	.works-gallery {
+		animation: works-fade 0.45s ease-out both;
+	}
+	@keyframes works-fade {
+		from {
+			opacity: 0.4;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+	.chip {
+		border: 1px solid rgb(0 0 0 / 0.15);
+		border-radius: 9999px;
+		padding: 0.45rem 1rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		line-height: 1.25rem;
+		background: #fff;
+		color: #111;
+		transition:
+			background-color 0.2s,
+			color 0.2s,
+			border-color 0.2s;
+	}
+	.chip:hover {
+		border-color: #111;
+	}
+	.chip[aria-pressed="true"] {
+		background: #111;
+		border-color: #111;
+		color: #fff;
+	}
+</style>
+
+<script>
+	function initWorksFilter() {
+		document.querySelectorAll<HTMLElement>("[data-works-gallery]").forEach((gallery) => {
+			const chips = [...gallery.querySelectorAll<HTMLButtonElement>("[data-filter]")];
+			const tiles = [...gallery.querySelectorAll<HTMLElement>(".work-tile")];
+			const empty = gallery.querySelector<HTMLElement>("[data-empty]");
+			const apply = (filter: string) => {
+				let shown = 0;
+				for (const chip of chips) chip.setAttribute("aria-pressed", String(chip.dataset.filter === filter));
+				for (const tile of tiles) {
+					const visible = filter === "all" || tile.dataset.category === filter;
+					tile.hidden = !visible;
+					if (visible) shown++;
+				}
+				empty?.classList.toggle("hidden", shown > 0);
+			};
+			for (const chip of chips) {
+				chip.addEventListener("click", () => {
+					const filter = chip.dataset.filter ?? "all";
+					apply(filter);
+					const url = new URL(window.location.href);
+					if (filter === "all") url.searchParams.delete("category");
+					else url.searchParams.set("category", filter);
+					history.replaceState(history.state, "", url);
+				});
+			}
+			const initial = new URL(window.location.href).searchParams.get("category");
+			if (initial && chips.some((chip) => chip.dataset.filter === initial)) apply(initial);
+		});
+	}
+	document.addEventListener("astro:page-load", initWorksFilter);
+</script>

@@ -45,7 +45,7 @@ export async function getCollectionStaticPaths<CollectionName extends keyof Cont
 
 /**
  * Portfolio items for one locale, hidden ones removed,
- * featured first and then newest first.
+ * featured first, then newest year first, then by title.
  */
 export async function getSortedWorks(locale: string) {
 	const works = await getCollection("works");
@@ -54,6 +54,7 @@ export async function getSortedWorks(locale: string) {
 		.sort(
 			(a, b) =>
 				Number(b.data.featured) - Number(a.data.featured) ||
-				b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+				b.data.year - a.data.year ||
+				a.data.title.localeCompare(b.data.title),
 		);
 }

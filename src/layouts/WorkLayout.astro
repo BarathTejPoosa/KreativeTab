@@ -2,11 +2,9 @@
 import { Image, getImage } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import Container from "@/components/primitives/Container.astro";
-import Link from "@/components/primitives/Link.astro";
-import Prose from "@/components/primitives/Prose.astro";
 import Share from "@/components/primitives/Share.astro";
-import Title from "@/components/primitives/Title.astro";
-import { loadVideo } from "@/lib/asset-helpers";
+import WorkPreview from "@/components/sections/WorkPreview.astro";
+import { getSortedWorks } from "@/lib/collection-helpers";
 import { translatePath, unlocalizedUrl } from "@/lib/localization-helpers";
 import { absoluteUrl, breadcrumbJsonLd, organizationId, withTrailingSlash } from "@/lib/seo";
 import { Icon } from "astro-icon/components";
@@ -17,69 +15,94 @@ type Props = {
 	frontmatter: CollectionEntry<"works">;
 };
 
-const currentLocale = Astro.currentLocale;
-
-interface WorkLayoutLocale {
-	visitProject: string;
-	client: string;
-	category: string;
-	work: string;
-	example: string;
-}
-
-interface ComponentLocales {
-	[key: string]: WorkLayoutLocale;
-}
-
-const componentLocales: ComponentLocales = {
-	it: {
-		visitProject: "Visita progetto",
-		client: "Cliente",
-		category: "Categoria",
-		work: "Lavori",
-		example: "Progetto di esempio: contenuto segnaposto, non un cliente reale.",
-	},
+const labels = {
 	en: {
-		visitProject: "Visit project",
-		client: "Client",
-		category: "Category",
+		visitProject: "View live",
 		work: "Work",
-		example: "Example project: placeholder content, not a real client.",
+		allWork: "All work",
+		example: "Example project · placeholder content",
+		more: "More projects",
+		prev: "Previous",
+		next: "Next",
+		videoFallback: "Your browser does not support video.",
 	},
-};
+	it: {
+		visitProject: "Vedi online",
+		work: "Lavori",
+		allWork: "Tutti i lavori",
+		example: "Progetto di esempio · contenuto segnaposto",
+		more: "Altri progetti",
+		prev: "Precedente",
+		next: "Successivo",
+		videoFallback: "Il tuo browser non supporta i video.",
+	},
+} as const;
 
-const l = componentLocales[currentLocale ?? defaultLocale];
+const locale = (Astro.currentLocale ?? defaultLocale) as keyof typeof labels;
+const l = labels[locale] ?? labels.en;
 
 const { frontmatter } = Astro.props;
-
-const videoSrc = frontmatter.data?.video
-	? await loadVideo(frontmatter.data.video)
-	: null;
-
 const work = frontmatter.data;
-const locale = currentLocale ?? defaultLocale;
 const coverAlt = work.coverAlt ?? `Cover image for ${work.title}`;
-const path = withTrailingSlash(
-	translatePath(locale, `/work${unlocalizedUrl(`/${frontmatter.slug}`)}`),
+const workPath = (slug: string) =>
+	withTrailingSlash(translatePath(locale, `/work${unlocalizedUrl(`/${slug}`)}`));
+const path = workPath(frontmatter.slug);
+
+// Neighbours in the same order as the Works grid
+const allWorks = await getSortedWorks(locale);
+const index = allWorks.findIndex((w) => w.slug === frontmatter.slug);
+const prev = allWorks.length > 1 ? allWorks[(index - 1 + allWorks.length) % allWorks.length] : undefined;
+const next = allWorks.length > 1 ? allWorks[(index + 1) % allWorks.length] : undefined;
+const others = allWorks.filter((w) => w.slug !== frontmatter.slug);
+const more = [
+	...others.filter((w) => w.data.category === work.category),
+	...others.filter((w) => w.data.category !== work.category),
+].slice(0, 3);
+
+/** Turn YouTube / Vimeo page links into embeddable player URLs. */
+function embedUrl(url: string): string {
+	try {
+		const u = new URL(url);
+		const host = u.hostname.replace(/^www\.|^m\./, "");
+		if (host === "youtu.be") return `https://www.youtube-nocookie.com/embed/${u.pathname.slice(1)}`;
+		if (host.endsWith("youtube.com")) {
+			if (u.pathname.startsWith("/embed/")) return url;
+			const id = u.searchParams.get("v") ?? u.pathname.split("/").filter(Boolean).pop();
+			return `https://www.youtube-nocookie.com/embed/${id}`;
+		}
+		if (host === "vimeo.com") return `https://player.vimeo.com/video/${u.pathname.split("/").filter(Boolean)[0]}`;
+		return url;
+	} catch {
+		return url;
+	}
+}
+const isFileVideo = (src: string) => /\.(mp4|webm|mov|m4v)(\?|$)/i.test(src);
+
+// Images for share cards and structured data
+const ogImage = await getImage({ src: work.cover, width: 1200, format: "jpg" });
+const blockImages = await Promise.all(
+	work.blocks
+		.flatMap((b) =>
+			b.discriminant === "image" ? [b.value.image] : b.discriminant === "imagePair" ? [b.value.left, b.value.right] : [],
+		)
+		.slice(0, 6)
+		.map((src) => getImage({ src, width: 1200, format: "jpg" })),
 );
 
-// Share image: the cover, resized for social cards
-const ogImage = await getImage({ src: work.cover, width: 1200, format: "jpg" });
-const galleryImages = await Promise.all(
-	work.gallery.map((item) => getImage({ src: item.image, width: 1200, format: "jpg" })),
-);
+const description =
+	work.seo?.description ??
+	work.intro ??
+	`${work.title}: ${work.category ?? "design"} project by KreativeTab${work.tags.length ? ` (${work.tags.slice(0, 3).join(", ")})` : ""}.`;
 
 const seo: PageSeo = {
 	title: work.seo?.title ?? `${work.title}${work.category ? ` · ${work.category}` : ""} | KreativeTab`,
-	description: work.seo?.description ?? work.description,
+	description,
 	noindex: work.seo?.noindex,
 	image: ogImage.src,
 	imageWidth: Number(ogImage.attributes.width),
 	imageHeight: Number(ogImage.attributes.height),
 	imageAlt: coverAlt,
 	type: "article",
-	publishedTime: work.pubDate,
-	modifiedTime: work.lastUpdateDate,
 	tags: work.tags,
 	section: work.category,
 	jsonLd: [
@@ -89,19 +112,16 @@ const seo: PageSeo = {
 			"@id": `${absoluteUrl(path)}#work`,
 			name: work.title,
 			headline: work.title,
-			description: work.description,
+			description,
 			url: absoluteUrl(path),
 			inLanguage: locale,
-			image: [ogImage.src, ...galleryImages.map((img) => img.src)].map(absoluteUrl),
-			datePublished: work.pubDate.toISOString(),
-			dateModified: work.lastUpdateDate.toISOString(),
+			image: [ogImage.src, ...blockImages.map((img) => img.src)].map(absoluteUrl),
+			dateCreated: String(work.year),
 			creator: { "@id": organizationId },
 			publisher: { "@id": organizationId },
 			...(work.category ? { genre: work.category } : {}),
 			...(work.tags.length ? { keywords: work.tags.join(", ") } : {}),
-			...(work.client && !work.example
-				? { sponsor: { "@type": "Organization", name: work.client } }
-				: {}),
+			...(work.client && !work.example ? { sponsor: { "@type": "Organization", name: work.client } } : {}),
 		},
 		breadcrumbJsonLd([
 			{ name: "Home", path: translatePath(locale, "/") },
@@ -110,106 +130,141 @@ const seo: PageSeo = {
 		]),
 	],
 };
+const meta = [work.client, work.category, work.year].filter(Boolean);
+const imgWidths = [800, 1400, 2000];
 ---
 
 <BaseLayout seo={seo}>
-	<section class="py-32 md:py-56">
+	<article class="no-reveal pb-20 pt-28 md:pb-28 md:pt-40">
 		<Container>
-			<div class="text-center">
+			<header class="mx-auto max-w-[1400px]">
+				<a href={translatePath(locale, "/works")} class="inline-flex items-center gap-1 text-sm text-neutral-500 transition-colors hover:text-black">
+					<Icon name="iconamoon:arrow-left-2-thin" class="h-4 w-4" />{l.allWork}
+				</a>
 				{
 					work.example && (
-						<p class="mx-auto mb-6 block w-fit rounded-full border border-amber-400 bg-amber-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
+						<p class="mb-0 mt-6 w-fit rounded-full border border-amber-400 bg-amber-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-amber-700">
 							{l.example}
 						</p>
 					)
 				}
-				<Title level={1}>{frontmatter.data.title}</Title>
-				<p class="mx-auto max-w-2xl pt-8 text-base text-slate-500">
-					<em>{frontmatter.data?.description}</em>
-				</p>
-				{
-					(work.client || work.category) && (
-						<dl class="mx-auto mt-8 flex flex-wrap justify-center gap-x-10 gap-y-2 text-sm">
-							{work.client && (
-								<div>
-									<dt class="inline font-semibold">{l.client}:</dt>{" "}
-									<dd class="inline text-slate-600">{work.client}</dd>
-								</div>
-							)}
-							{work.category && (
-								<div>
-									<dt class="inline font-semibold">{l.category}:</dt>{" "}
-									<dd class="inline text-slate-600">{work.category}</dd>
-								</div>
-							)}
-						</dl>
-					)
-				}
-				{
-					frontmatter.data.link && (
-						<Link
-							href={frontmatter.data.link}
-							target="_blank"
-							class="mt-10"
-							style="outline"
-						>
-							{l.visitProject}
-							<Icon
-								name="iconamoon:arrow-top-right-1-thin"
-								class="inline-block w-6 h-6 ml-2"
-							/>
-						</Link>
-					)
-				}
-			</div>
-			<div class="flex w-full flex-col items-center justify-center pt-10">
-				{
-					"video" in frontmatter.data &&
-					frontmatter.data?.video &&
-					videoSrc ? (
-						<video autoplay loop muted playsinline>
-							<source src={videoSrc} />
-							Your browser does not support the video tag.
-						</video>
-					) : (
-						"cover" in frontmatter.data &&
-						frontmatter.data?.cover && (
-							<Image
-								class="w-full lg:w-auto lg:min-w-[50rem]"
-								src={frontmatter.data?.cover}
-								alt={coverAlt}
-								loading="eager"
-							/>
+				<div class="mt-5 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+					<div>
+						<h1 class="m-0 font-display text-[clamp(2.25rem,4.5vw,4rem)] leading-[1.05]">{work.title}</h1>
+						<p class="mb-0 mt-4 text-base text-neutral-500">
+							{meta.map((item, i) => (<>{i > 0 && <span class="mx-2 text-neutral-300">·</span>}<span>{item}</span></>))}
+						</p>
+					</div>
+					{
+						work.link && (
+							<a href={work.link} target="_blank" rel="noopener" class="inline-flex min-h-11 w-fit shrink-0 items-center gap-2 rounded-full bg-black px-5 text-sm font-semibold text-white transition-colors hover:bg-neutral-700">
+								{l.visitProject}
+								<Icon name="iconamoon:arrow-top-right-1-thin" class="h-5 w-5" />
+							</a>
 						)
-					)
-				}
-				<Prose><slot /></Prose>
-				{
-					work.gallery.length > 0 && (
-						<div class="mx-auto grid w-full max-w-5xl grid-cols-1 gap-8 pt-16 md:grid-cols-2">
-							{work.gallery.map((item) => (
-								<figure>
-									<Image
-										src={item.image}
-										alt={item.alt ?? ""}
-										widths={[480, 800, 1200]}
-										sizes="(min-width: 768px) 50vw, 100vw"
-										class="w-full rounded-lg object-cover"
-									/>
-									{item.caption && (
-										<figcaption class="pt-2 text-sm text-slate-500">
-											{item.caption}
-										</figcaption>
-									)}
-								</figure>
-							))}
-						</div>
-					)
-				}
-				<div class="mx-auto w-full max-w-3xl pt-20">
-					<Share />
+					}
 				</div>
+				{
+					work.tags.length > 0 && (
+						<ul class="m-0 mt-6 flex list-none flex-wrap gap-2 p-0">
+							{work.tags.map((tag) => (
+								<li class="rounded-full border border-neutral-200 px-3 py-1 text-xs text-neutral-600">{tag}</li>
+							))}
+						</ul>
+					)
+				}
+				{work.intro && <p class="mb-0 mt-8 max-w-2xl text-lg leading-relaxed text-neutral-700">{work.intro}</p>}
+			</header>
+
+			<div class="project-stack mx-auto mt-12 flex max-w-[1400px] flex-col gap-4 md:mt-16 md:gap-6">
+				{
+					work.blocks.length === 0 && (
+						<Image src={work.cover} alt={coverAlt} widths={imgWidths} sizes="(min-width: 1440px) 1400px, 100vw" loading="eager" class="block h-auto w-full" />
+					)
+				}
+				{
+					work.blocks.map((block, i) => {
+						const loading = i < 1 ? "eager" : "lazy";
+						if (block.discriminant === "image") {
+							const b = block.value;
+							return (
+								<figure class="m-0">
+									<Image src={b.image} alt={b.alt ?? ""} widths={imgWidths} sizes="(min-width: 1440px) 1400px, 100vw" loading={loading} class="block h-auto w-full" />
+									{b.caption && <figcaption class="pt-3 text-sm text-neutral-500">{b.caption}</figcaption>}
+								</figure>
+							);
+						}
+						if (block.discriminant === "imagePair") {
+							const b = block.value;
+							return (
+								<figure class="m-0">
+									<div class="grid gap-4 sm:grid-cols-2 md:gap-6">
+										<Image src={b.left} alt={b.leftAlt ?? ""} widths={[600, 900, 1200]} sizes="(min-width: 640px) 50vw, 100vw" loading={loading} class="block h-auto w-full" />
+										<Image src={b.right} alt={b.rightAlt ?? ""} widths={[600, 900, 1200]} sizes="(min-width: 640px) 50vw, 100vw" loading={loading} class="block h-auto w-full" />
+									</div>
+									{b.caption && <figcaption class="pt-3 text-sm text-neutral-500">{b.caption}</figcaption>}
+								</figure>
+							);
+						}
+						if (block.discriminant === "video") {
+							const b = block.value;
+							const src = b.file || b.url || "";
+							if (!src) return null;
+							return (
+								<figure class="m-0">
+									{isFileVideo(src) ? (
+										<video class="block h-auto w-full bg-black" src={src} autoplay loop muted playsinline controls preload="metadata">
+											{l.videoFallback}
+										</video>
+									) : (
+										<div class="relative aspect-video w-full bg-black">
+											<iframe class="absolute inset-0 h-full w-full" src={embedUrl(src)} title={b.caption ?? work.title} loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen />
+										</div>
+									)}
+									{b.caption && <figcaption class="pt-3 text-sm text-neutral-500">{b.caption}</figcaption>}
+								</figure>
+							);
+						}
+						if (block.discriminant === "text") {
+							return <p class="mx-auto my-8 max-w-2xl whitespace-pre-line text-center text-lg leading-relaxed text-neutral-700 md:my-12">{block.value.text}</p>;
+						}
+						return null;
+					})
+				}
 			</div>
+
+			<div class="mx-auto mt-16 max-w-[1400px]">
+				<Share />
+			</div>
+
+			{
+				prev && next && (
+					<nav aria-label={l.more} class="mx-auto mt-12 grid max-w-[1400px] grid-cols-2 gap-4 border-t border-neutral-200 pt-8">
+						<a href={workPath(prev.slug)} class="group flex flex-col gap-1">
+							<span class="inline-flex items-center gap-1 text-xs uppercase tracking-wider text-neutral-500"><Icon name="iconamoon:arrow-left-2-thin" class="h-4 w-4" />{l.prev}</span>
+							<span class="font-display text-lg leading-tight group-hover:underline md:text-2xl">{prev.data.title}</span>
+						</a>
+						<a href={workPath(next.slug)} class="group flex flex-col items-end gap-1 text-right">
+							<span class="inline-flex items-center gap-1 text-xs uppercase tracking-wider text-neutral-500">{l.next}<Icon name="iconamoon:arrow-right-2-thin" class="h-4 w-4" /></span>
+							<span class="font-display text-lg leading-tight group-hover:underline md:text-2xl">{next.data.title}</span>
+						</a>
+					</nav>
+				)
+			}
+
+			{
+				more.length > 0 && (
+					<section class="mx-auto mt-16 max-w-[1400px]">
+						<div class="mb-6 flex items-baseline justify-between">
+							<h2 class="m-0 text-2xl md:text-3xl">{l.more}</h2>
+							<a href={translatePath(locale, "/works")} class="text-sm text-neutral-500 hover:text-black">{l.allWork} →</a>
+						</div>
+						<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+							{more.map((w) => <WorkPreview work={w} headingLevel="h3" />)}
+						</div>
+					</section>
+				)
+			}
 		</Container>
-	</section>
+	</article>
 </BaseLayout>
