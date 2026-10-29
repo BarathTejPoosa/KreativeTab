@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import Container from "@/components/primitives/Container.astro";
 import Link from "@/components/primitives/Link.astro";
@@ -7,6 +7,8 @@ import Prose from "@/components/primitives/Prose.astro";
 import Share from "@/components/primitives/Share.astro";
 import Title from "@/components/primitives/Title.astro";
 import { loadVideo } from "@/lib/asset-helpers";
+import { translatePath, unlocalizedUrl } from "@/lib/localization-helpers";
+import { absoluteUrl, breadcrumbJsonLd, organizationId, withTrailingSlash } from "@/lib/seo";
 import { Icon } from "astro-icon/components";
 import { defaultLocale } from "site";
 import BaseLayout from "./BaseLayout.astro";
@@ -19,6 +21,10 @@ const currentLocale = Astro.currentLocale;
 
 interface WorkLayoutLocale {
 	visitProject: string;
+	client: string;
+	category: string;
+	work: string;
+	example: string;
 }
 
 interface ComponentLocales {
@@ -28,9 +34,17 @@ interface ComponentLocales {
 const componentLocales: ComponentLocales = {
 	it: {
 		visitProject: "Visita progetto",
+		client: "Cliente",
+		category: "Categoria",
+		work: "Lavori",
+		example: "Progetto di esempio: contenuto segnaposto, non un cliente reale.",
 	},
 	en: {
 		visitProject: "Visit project",
+		client: "Client",
+		category: "Category",
+		work: "Work",
+		example: "Example project: placeholder content, not a real client.",
 	},
 };
 
@@ -41,16 +55,96 @@ const { frontmatter } = Astro.props;
 const videoSrc = frontmatter.data?.video
 	? await loadVideo(frontmatter.data.video)
 	: null;
+
+const work = frontmatter.data;
+const locale = currentLocale ?? defaultLocale;
+const coverAlt = work.coverAlt ?? `Cover image for ${work.title}`;
+const path = withTrailingSlash(
+	translatePath(locale, `/work${unlocalizedUrl(`/${frontmatter.slug}`)}`),
+);
+
+// Share image: the cover, resized for social cards
+const ogImage = await getImage({ src: work.cover, width: 1200, format: "jpg" });
+const galleryImages = await Promise.all(
+	work.gallery.map((item) => getImage({ src: item.image, width: 1200, format: "jpg" })),
+);
+
+const seo: PageSeo = {
+	title: work.seo?.title ?? `${work.title}${work.category ? ` · ${work.category}` : ""} | KreativeTab`,
+	description: work.seo?.description ?? work.description,
+	noindex: work.seo?.noindex,
+	image: ogImage.src,
+	imageWidth: Number(ogImage.attributes.width),
+	imageHeight: Number(ogImage.attributes.height),
+	imageAlt: coverAlt,
+	type: "article",
+	publishedTime: work.pubDate,
+	modifiedTime: work.lastUpdateDate,
+	tags: work.tags,
+	section: work.category,
+	jsonLd: [
+		{
+			"@context": "https://schema.org",
+			"@type": "CreativeWork",
+			"@id": `${absoluteUrl(path)}#work`,
+			name: work.title,
+			headline: work.title,
+			description: work.description,
+			url: absoluteUrl(path),
+			inLanguage: locale,
+			image: [ogImage.src, ...galleryImages.map((img) => img.src)].map(absoluteUrl),
+			datePublished: work.pubDate.toISOString(),
+			dateModified: work.lastUpdateDate.toISOString(),
+			creator: { "@id": organizationId },
+			publisher: { "@id": organizationId },
+			...(work.category ? { genre: work.category } : {}),
+			...(work.tags.length ? { keywords: work.tags.join(", ") } : {}),
+			...(work.client && !work.example
+				? { sponsor: { "@type": "Organization", name: work.client } }
+				: {}),
+		},
+		breadcrumbJsonLd([
+			{ name: "Home", path: translatePath(locale, "/") },
+			{ name: l.work, path: translatePath(locale, "/works") },
+			{ name: work.title, path },
+		]),
+	],
+};
 ---
 
-<BaseLayout>
+<BaseLayout seo={seo}>
 	<section class="py-32 md:py-56">
 		<Container>
 			<div class="text-center">
+				{
+					work.example && (
+						<p class="mx-auto mb-6 block w-fit rounded-full border border-amber-400 bg-amber-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
+							{l.example}
+						</p>
+					)
+				}
 				<Title level={1}>{frontmatter.data.title}</Title>
 				<p class="mx-auto max-w-2xl pt-8 text-base text-slate-500">
 					<em>{frontmatter.data?.description}</em>
 				</p>
+				{
+					(work.client || work.category) && (
+						<dl class="mx-auto mt-8 flex flex-wrap justify-center gap-x-10 gap-y-2 text-sm">
+							{work.client && (
+								<div>
+									<dt class="inline font-semibold">{l.client}:</dt>{" "}
+									<dd class="inline text-slate-600">{work.client}</dd>
+								</div>
+							)}
+							{work.category && (
+								<div>
+									<dt class="inline font-semibold">{l.category}:</dt>{" "}
+									<dd class="inline text-slate-600">{work.category}</dd>
+								</div>
+							)}
+						</dl>
+					)
+				}
 				{
 					frontmatter.data.link && (
 						<Link
@@ -83,12 +177,35 @@ const videoSrc = frontmatter.data?.video
 							<Image
 								class="w-full lg:w-auto lg:min-w-[50rem]"
 								src={frontmatter.data?.cover}
-								alt={`Cover image for ${frontmatter.data?.title}`}
+								alt={coverAlt}
+								loading="eager"
 							/>
 						)
 					)
 				}
 				<Prose><slot /></Prose>
+				{
+					work.gallery.length > 0 && (
+						<div class="mx-auto grid w-full max-w-5xl grid-cols-1 gap-8 pt-16 md:grid-cols-2">
+							{work.gallery.map((item) => (
+								<figure>
+									<Image
+										src={item.image}
+										alt={item.alt ?? ""}
+										widths={[480, 800, 1200]}
+										sizes="(min-width: 768px) 50vw, 100vw"
+										class="w-full rounded-lg object-cover"
+									/>
+									{item.caption && (
+										<figcaption class="pt-2 text-sm text-slate-500">
+											{item.caption}
+										</figcaption>
+									)}
+								</figure>
+							))}
+						</div>
+					)
+				}
 				<div class="mx-auto w-full max-w-3xl pt-20">
 					<Share />
 				</div>

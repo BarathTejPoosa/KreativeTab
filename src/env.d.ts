@@ -51,6 +51,27 @@ declare global {
 		title: string;
 		description: string;
 		author?: string;
+		twitterHandle?: string;
+	}
+
+	/** Everything a page can tell <Head> about its own SEO. */
+	interface PageSeo {
+		title?: string;
+		description?: string;
+		author?: string;
+		/** Absolute or root-relative share image URL. Defaults to the page's generated og.png. */
+		image?: string;
+		imageWidth?: number;
+		imageHeight?: number;
+		imageAlt?: string;
+		type?: "website" | "article";
+		noindex?: boolean | null;
+		publishedTime?: Date;
+		modifiedTime?: Date;
+		tags?: string[];
+		section?: string;
+		/** Extra JSON-LD objects for this page (Organization + WebSite are always added). */
+		jsonLd?: Record<string, unknown>[];
 	}
 
 	interface StyleSettings {

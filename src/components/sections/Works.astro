@@ -1,27 +1,27 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
-import type { ButtonProps } from "@/components/primitives/Button.astro";
-import Link from "@/components/primitives/Link.astro";
 import WorkPreview from "@/components/sections/WorkPreview.astro";
+import { getSortedWorks } from "@/lib/collection-helpers";
+import { translatePath, unlocalizedUrl } from "@/lib/localization-helpers";
+import { absoluteUrl, jsonLdString, withTrailingSlash } from "@/lib/seo";
+import { defaultLocale } from "site.config";
 
-const currentLocale = Astro.currentLocale;
+const currentLocale = Astro.currentLocale ?? defaultLocale;
 
-const works = await getCollection("works");
+// Featured portfolio items first, then newest
+const allWorks = await getSortedWorks(currentLocale);
 
-const allWorks = works
-	.map((work) => {
-		const [lang, ...slug] = work.slug.split("/");
-		return {
-			...work,
-			lang: lang,
-			slug: work.slug.startsWith("/") ? work.slug : `/${work.slug}`,
-		};
-	})
-	.filter((page) => page.lang === currentLocale)
-	.sort(
-		(a, b) =>
-			a.data.lastUpdateDate.getTime() - b.data.lastUpdateDate.getTime(),
-	) as CollectionEntry<"works">[];
+const itemList = {
+	"@context": "https://schema.org",
+	"@type": "ItemList",
+	itemListElement: allWorks.map((work, index) => ({
+		"@type": "ListItem",
+		position: index + 1,
+		name: work.data.title,
+		url: absoluteUrl(
+			withTrailingSlash(translatePath(currentLocale, `/work${unlocalizedUrl(`/${work.slug}`)}`)),
+		),
+	})),
+};
 ---
 
 <div
@@ -29,3 +29,4 @@ const allWorks = works
 >
 	{allWorks.map((work) => <WorkPreview {work} />)}
 </div>
+<script type="application/ld+json" is:inline set:html={jsonLdString(itemList)} />

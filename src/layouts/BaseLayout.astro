@@ -7,14 +7,13 @@ import LinesWrapper from "@/components/primitives/LinesWrapper.astro";
 import LoadingIndicator from "@/components/primitives/LoadingIndicator.astro";
 import Widget from "@/components/primitives/Widget.astro";
 import { getLocalizedSettings } from "@/lib/localization-helpers";
-import type { SEOProps } from "astro-seo";
 
 const currentLocale = Astro.currentLocale;
 
 const { widget } = getLocalizedSettings(currentLocale);
 
 type Props = {
-	seo?: SEOProps | MinimalSeo;
+	seo?: PageSeo;
 };
 
 const { seo } = Astro.props;

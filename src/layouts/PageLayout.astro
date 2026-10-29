@@ -1,4 +1,5 @@
 ---
+import { getImage } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import Container from "@/components/primitives/Container.astro";
 import BaseLayout from "./BaseLayout.astro";
@@ -8,9 +9,30 @@ type Props = {
 };
 
 const { frontmatter } = Astro.props;
+const { seo: pageSeo } = frontmatter.data;
+
+// Optional custom share image set in the CMS; otherwise Head uses the generated og.png
+const customImage = pageSeo.image
+	? await getImage({ src: pageSeo.image, width: 1200, format: "jpg" })
+	: undefined;
+
+const seo: PageSeo = {
+	title: pageSeo.title,
+	description: pageSeo.description,
+	author: pageSeo.author,
+	noindex: pageSeo.noindex,
+	...(customImage
+		? {
+				image: customImage.src,
+				imageWidth: Number(customImage.attributes.width),
+				imageHeight: Number(customImage.attributes.height),
+				imageAlt: frontmatter.data.title,
+			}
+		: {}),
+};
 ---
 
-<BaseLayout seo={frontmatter.data.seo}>
+<BaseLayout seo={seo}>
 	<main>
 		{
 			frontmatter.data.hideTitle ? null : (

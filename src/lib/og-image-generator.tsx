@@ -1,141 +1,113 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import satori, { type SatoriOptions } from "satori";
 import sharp from "sharp";
-import { siteTitle } from "site";
+import { siteTitle, siteUrl } from "site.config";
+
+export const OG_WIDTH = 1200;
+export const OG_HEIGHT = 630;
 
 export interface OgData {
 	title: string;
-	author?: string;
-	cover?: string;
-	logo?: string;
-	date?: Date;
+	eyebrow?: string;
+	subtitle?: string;
 }
 
-/**
- * Opengraph template to generate svg
- */
-const Template = (props: OgData) => (
+const root = process.cwd();
+const fontFile = (pkg: string, file: string) =>
+	readFile(join(root, "node_modules", "@fontsource", pkg, "files", file));
+
+let fontsPromise: Promise<SatoriOptions["fonts"]> | undefined;
+const loadFonts = () => {
+	fontsPromise ??= Promise.all([
+		fontFile("plus-jakarta-sans", "plus-jakarta-sans-latin-700-normal.woff"),
+		fontFile("inter", "inter-latin-400-normal.woff"),
+	]).then(([heading, body]) => [
+		{ name: "Jakarta", data: heading, weight: 700, style: "normal" },
+		{ name: "Inter", data: body, weight: 400, style: "normal" },
+	]);
+	return fontsPromise;
+};
+
+let markPromise: Promise<string> | undefined;
+const loadMark = () => {
+	// Rasterise first: nested SVG images are not rendered when the card is converted to PNG
+	markPromise ??= readFile(join(root, "src", "assets", "og-mark.svg"))
+		.then((svg) => sharp(svg).resize(112, 112).png().toBuffer())
+		.then((png) => `data:image/png;base64,${png.toString("base64")}`);
+	return markPromise;
+};
+
+const host = new URL(siteUrl).host;
+
+const Template = (props: OgData & { mark: string }) => (
 	<div
 		style={{
 			display: "flex",
-			flexDirection: "row",
+			flexDirection: "column",
+			justifyContent: "space-between",
 			width: "100%",
 			height: "100%",
+			padding: "72px 80px",
 			color: "#ffffff",
-			background: "radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%)",
-			padding: "2rem",
-			border: "5px solid #333333",
-			backgroundPosition: "left",
-			backgroundRepeat: "no-repeat",
-			alignItems: "center",
-			position: "relative",
+			background:
+				"radial-gradient(circle at 20% 80%, rgb(48, 48, 48) 0%, rgb(0, 0, 0) 85%)",
+			fontFamily: "Inter",
 		}}
 	>
-		<h1
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				justifyContent: "center",
-				width: "100%",
-				flex: "1",
-				padding: "2rem 1rem",
-				fontSize: "3rem",
-				textOverflow: "ellipsis",
-				overflow: "hidden",
-				fontWeight: "bold",
-				wordBreak: "break-word",
-			}}
-		>
-			{props.title}
-		</h1>
-		{props.cover && (
-			<div
+		<div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+			<img src={props.mark} width={56} height={56} alt="" />
+			<span style={{ fontFamily: "Jakarta", fontSize: 32, fontWeight: 700 }}>
+				{siteTitle}
+			</span>
+		</div>
+		<div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+			{props.eyebrow && (
+				<span
+					style={{
+						fontSize: 26,
+						textTransform: "uppercase",
+						letterSpacing: "0.12em",
+						color: "#a3a3a3",
+					}}
+				>
+					{props.eyebrow}
+				</span>
+			)}
+			<span
 				style={{
-					display: "flex",
-					flexDirection: "column",
-					flex: "1",
-					margin: "2.5rem",
+					fontFamily: "Jakarta",
+					fontSize: props.title.length > 60 ? 56 : 72,
+					fontWeight: 700,
+					lineHeight: 1.08,
+					maxWidth: "1000px",
 				}}
 			>
-				<img
-					src={props.cover}
-					style={{
-						width: "100%",
-						height: "100%",
-						objectFit: "cover",
-						borderRadius: "24px",
-					}}
-					alt="Cover"
-				/>
-			</div>
-		)}
-		{props.logo ? (
-			<img
-				src={props.logo}
-				style={{ position: "absolute", bottom: "10px", right: "10px", zIndex: 100 }}
-				width={24}
-				height={24}
-				alt="Logo"
-			/>
-		) : (
-			<span style={{ position: "absolute", bottom: "20px", right: "20px", zIndex: 100 }}>{props.author}</span>
-		)}
+				{props.title}
+			</span>
+			{props.subtitle && (
+				<span
+					style={{ fontSize: 28, color: "#d4d4d4", maxWidth: "960px", lineHeight: 1.35 }}
+				>
+					{props.subtitle.length > 140
+						? `${props.subtitle.slice(0, 137)}…`
+						: props.subtitle}
+				</span>
+			)}
+		</div>
+		<span style={{ fontSize: 24, color: "#a3a3a3" }}>{host}</span>
 	</div>
 );
 
-/**
- * generate opengraph image with satori and return a buffer
- *
- * @param text
- */
-const generateOgImage = async (
-	text: string = siteTitle,
-	author = "KreativeTab",
-	date: Date = new Date(),
-	cover?: string,
-	logo?: string,
-): Promise<Buffer> => {
-	const openSansBoldRes = await fetch("https://www.1001fonts.com/download/font/open-sans.extrabold.ttf");
-	const openSansBold = await openSansBoldRes.arrayBuffer();
-
-	const openSansRegularRes = await fetch("https://www.1001fonts.com/download/font/open-sans.regular.ttf");
-	const openSansRegular = await openSansRegularRes.arrayBuffer();
-
-	const options: SatoriOptions = {
-		width: 600,
-		height: 315,
-		embedFont: true,
-		fonts: [
-			{
-				name: "Open Sans",
-				data: openSansBold,
-				weight: 900,
-				style: "normal",
-			},
-			{
-				name: "Open Sans",
-				data: openSansRegular,
-				weight: 600,
-				style: "normal",
-			},
-		],
-	};
-
-	const svg = await satori(
-		Template({
-			title: text,
-			author: author,
-			date: date,
-			cover: cover,
-			logo: logo,
-		}),
-		options,
-	);
-
-	const sharpSvg = Buffer.from(svg);
-
-	const buffer = await sharp(sharpSvg).toBuffer();
-
-	return buffer;
+/** Render a 1200×630 PNG share card. Fonts are bundled locally (no network at build). */
+const generateOgImage = async (data: OgData): Promise<Buffer> => {
+	const [fonts, mark] = await Promise.all([loadFonts(), loadMark()]);
+	const svg = await satori(Template({ ...data, title: data.title || siteTitle, mark }), {
+		width: OG_WIDTH,
+		height: OG_HEIGHT,
+		fonts,
+	});
+	return sharp(Buffer.from(svg)).png().toBuffer();
 };
 
 export default generateOgImage;
