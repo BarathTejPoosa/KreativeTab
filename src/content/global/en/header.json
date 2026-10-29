@@ -12,6 +12,10 @@
 			"link": "/about"
 		},
 		{
+			"title": "Services",
+			"link": "/services"
+		},
+		{
 			"title": "Works",
 			"link": "/works"
 		},

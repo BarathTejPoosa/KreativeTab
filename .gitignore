@@ -24,3 +24,5 @@ pnpm-debug.log*
 
 .wrangler
 .originkit/
+.vercel
+.env*

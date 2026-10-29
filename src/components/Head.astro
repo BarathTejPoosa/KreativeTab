@@ -3,78 +3,112 @@ import { pwaAssetsHead } from "virtual:pwa-assets/head";
 import { pwaInfo } from "virtual:pwa-info";
 import "@/styles/global.css";
 import { getLocalizedSettings } from "@/lib/localization-helpers";
+import {
+	absoluteUrl,
+	jsonLdString,
+	organizationJsonLd,
+	websiteJsonLd,
+	withTrailingSlash,
+} from "@/lib/seo";
 import { SEO, type SEOProps } from "astro-seo";
+import { defaultLocale, isIndexable, localeTags, siteTitle } from "site.config";
 
 type Props = {
-	seo?: SEOProps | MinimalSeo;
+	seo?: PageSeo;
 };
 
-const currentLocale = Astro.currentLocale;
+const currentLocale = Astro.currentLocale ?? defaultLocale;
 
 const { seo: defaultSeo, style } = getLocalizedSettings(currentLocale);
 
-const { seo: seoProp } = Astro.props;
+const seo: PageSeo = Astro.props.seo ?? {};
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+const pathname = withTrailingSlash(Astro.url.pathname);
+const canonicalURL = absoluteUrl(pathname);
 
-const pathWithSlash = Astro.url.pathname.endsWith("/")
-	? Astro.url.pathname
-	: `${Astro.url.pathname}/`;
+const title = seo.title || defaultSeo.title;
+const description = seo.description || defaultSeo.description;
+const author = seo.author || defaultSeo.author || siteTitle;
 
-const shareImage = new URL(
-	"og.png",
-	new URL(pathWithSlash, Astro.site),
-).toString();
+// Default share image: the 1200×630 card generated for every CMS page at <path>/og.png
+const shareImage = seo.image ? absoluteUrl(seo.image) : absoluteUrl(`${pathname}og.png`);
+const imageWidth = seo.image ? seo.imageWidth : 1200;
+const imageHeight = seo.image ? seo.imageHeight : 630;
+const imageAlt = seo.imageAlt || title;
 
-const baseSeo: SEOProps = {
-	title: seoProp?.title ?? defaultSeo.title,
-	description: seoProp?.description ?? defaultSeo.description,
+const noindex = !isIndexable || Boolean(seo.noindex);
+const twitterHandle = defaultSeo.twitterHandle
+	? `@${defaultSeo.twitterHandle.replace(/^@/, "")}`
+	: undefined;
+const ogLocale = localeTags[currentLocale as keyof typeof localeTags] ?? "en_GB";
+const type = seo.type ?? "website";
+
+const seoProps: SEOProps = {
+	title,
+	description,
 	charset: "UTF-8",
 	canonical: canonicalURL,
+	noindex,
+	nofollow: noindex,
 	openGraph: {
-		basic: {
-			url: canonicalURL,
-			title: seoProp?.title ?? defaultSeo.title,
-			type: "website",
-			image: shareImage,
-		},
+		basic: { url: canonicalURL, title, type, image: shareImage },
 		optional: {
-			description: seoProp?.description ?? defaultSeo.description,
-			siteName: seoProp?.title ?? defaultSeo.title,
+			description,
+			siteName: siteTitle,
+			locale: ogLocale,
 		},
+		image: {
+			url: shareImage,
+			secureUrl: shareImage,
+			type: shareImage.endsWith(".png") ? "image/png" : shareImage.match(/\.jpe?g$/) ? "image/jpeg" : undefined,
+			width: imageWidth,
+			height: imageHeight,
+			alt: imageAlt,
+		},
+		...(type === "article"
+			? {
+					article: {
+						publishedTime: seo.publishedTime?.toISOString(),
+						modifiedTime: seo.modifiedTime?.toISOString(),
+						authors: [author],
+						section: seo.section,
+						tags: seo.tags,
+					},
+				}
+			: {}),
 	},
 	twitter: {
-		site: canonicalURL,
+		card: "summary_large_image",
+		site: twitterHandle,
+		creator: twitterHandle,
+		title,
+		description,
+		image: shareImage,
+		imageAlt,
 	},
 	extend: {
 		meta: [
-			{
-				name: "publisher",
-				content: (seoProp as MinimalSeo)?.author ?? defaultSeo.author,
-			},
-			{
-				name: "author",
-				content: (seoProp as MinimalSeo)?.author ?? defaultSeo.author,
-			},
-			{
-				name: "msapplication-TileColor",
-				content: style.theme.colors.tileColor,
-			},
+			{ name: "author", content: author },
+			{ name: "publisher", content: siteTitle },
+			{ name: "msapplication-TileColor", content: style.theme.colors.tileColor },
 		],
 	},
 };
 
-const seo = {
-	...baseSeo,
-	...seoProp,
-};
+const jsonLd = [
+	organizationJsonLd(getLocalizedSettings(defaultLocale).seo.description),
+	websiteJsonLd(currentLocale),
+	...(seo.jsonLd ?? []),
+];
 ---
 
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-	<SEO {...seo} />
+	<SEO {...seoProps} />
+	<script type="application/ld+json" is:inline set:html={jsonLdString(jsonLd)} />
+	<link rel="alternate" type="application/rss+xml" title={`${siteTitle} blog`} href="/rss.xml" />
 
 	{
 		pwaAssetsHead.themeColor && (

@@ -1,21 +1,13 @@
 ---
-import { getCollection } from "astro:content";
+import { getSortedWorks } from "@/lib/collection-helpers";
 import type { ButtonProps } from "@/components/primitives/Button.astro";
 import RecentWorksTunnel from "@/components/sections/RecentWorksTunnel";
 import { translatePath, unlocalizedUrl } from "@/lib/localization-helpers";
 import { defaultLocale } from "site";
 
 const currentLocale = Astro.currentLocale ?? defaultLocale;
-const works = await getCollection("works");
-
-const recentWorks = works
-	.map((work) => {
-		const [lang] = work.slug.split("/");
-		return { ...work, lang };
-	})
-	.filter((work) => work.lang === currentLocale && !work.data.hidden)
-	.sort((a, b) => b.data.lastUpdateDate.getTime() - a.data.lastUpdateDate.getTime())
-	.slice(0, 4);
+// Featured portfolio items first, then newest
+const recentWorks = (await getSortedWorks(currentLocale)).slice(0, 4);
 
 interface Props {
 	title: string;
@@ -29,7 +21,7 @@ const allWorkHref = translatePath(currentLocale, allWorkButton?.href ?? "/works"
 
 const tunnelWorks = recentWorks.map((work) => ({
 	title: work.data.title,
-	tags: work.data.tags.join(", "),
+	tags: work.data.category ?? work.data.tags.join(", "),
 	href: translatePath(currentLocale, `/work${unlocalizedUrl(`/${work.slug}`)}`),
 }));
 

@@ -1,19 +1,37 @@
 import { defineCollection, z } from "astro:content";
 
+// Keystatic writes empty strings / nulls for untouched optional fields, so
+// optional text is normalised to `undefined` here.
+const optionalText = z
+	.string()
+	.nullish()
+	.transform((value) => (value && value.trim() !== "" ? value : undefined));
+
+const seoOverrides = z
+	.object({
+		title: optionalText,
+		description: optionalText,
+		noindex: z.boolean().nullish(),
+	})
+	.nullish();
+
 const pagesCollection = defineCollection({
 	schema: ({ image }) =>
 		z.object({
 			title: z.string(),
-			subtitle: z.optional(z.string()),
+			subtitle: optionalText,
 			type: z.string(),
 			lastUpdateDate: z.date(),
 			hideTitle: z.optional(z.boolean()),
 			hidden: z.optional(z.boolean()),
-			cover: z.optional(image()),
+			cover: image().nullish(),
+			coverAlt: optionalText,
 			seo: z.object({
 				title: z.string(),
 				description: z.string(),
-				author: z.string(),
+				author: optionalText,
+				image: image().nullish(),
+				noindex: z.boolean().nullish(),
 			}),
 		}),
 });
@@ -25,26 +43,45 @@ const postsCollection = defineCollection({
 			pubDate: z.date(),
 			lastUpdateDate: z.date(),
 			description: z.string(),
-			category: z.string(),
+			category: optionalText,
 			author: z.string(),
 			cover: image(),
-			tags: z.array(z.string()),
+			coverAlt: optionalText,
+			tags: z.array(z.string()).default([]),
 			hidden: z.optional(z.boolean()),
+			example: z.boolean().default(false),
+			seo: seoOverrides,
 		}),
 });
 
+/** Portfolio items. URL: /work/<slug> */
 const worksCollection = defineCollection({
 	schema: ({ image }) =>
 		z.object({
 			title: z.string(),
+			client: optionalText,
+			category: optionalText,
 			pubDate: z.date(),
 			lastUpdateDate: z.date(),
 			cover: image(),
-			video: z.optional(z.string()),
+			coverAlt: optionalText,
+			gallery: z
+				.array(
+					z.object({
+						image: image(),
+						alt: optionalText,
+						caption: optionalText,
+					}),
+				)
+				.default([]),
+			video: optionalText,
 			description: z.string(),
-			link: z.optional(z.string()),
-			tags: z.array(z.string()),
+			featured: z.boolean().default(false),
+			link: optionalText,
+			tags: z.array(z.string()).default([]),
 			hidden: z.optional(z.boolean()),
+			example: z.boolean().default(false),
+			seo: seoOverrides,
 		}),
 });
 

@@ -14,7 +14,7 @@ interface Props {
 
 const { work } = Astro.props;
 
-const unlocalizedPath = unlocalizedUrl(work.slug);
+const unlocalizedPath = unlocalizedUrl(`/${work.slug}`);
 const localizedPath = translatePath(
 	currentLocale ?? defaultLocale,
 	`/work${unlocalizedPath}`,
@@ -54,7 +54,9 @@ const videoSrc = work.data?.video ? await loadVideo(work.data.video) : null;
 			) : (
 				<Image
 					src={work.data.cover}
-					alt={`Cover for ${work.data.title}`}
+					widths={[480, 800, 1200]}
+					sizes="(min-width: 768px) 50vw, 100vw"
+					alt={work.data.coverAlt ?? `Cover for ${work.data.title}`}
 					class="object-cover align-middle inline-block w-full h-96 min-h-full max-w-full"
 				/>
 			)
@@ -73,8 +75,15 @@ const videoSrc = work.data?.video ? await loadVideo(work.data.video) : null;
 					<div class="w-full h-0.5 mt-1"></div>
 				</div>
 			</a>
-			<p class="text-neutral-400 text-lg">
-				{Array.from(work.data.tags).join(", ")}
+			<p class="text-neutral-400 text-lg text-right">
+				{work.data.category ?? Array.from(work.data.tags).join(", ")}
+				{
+					work.data.example && (
+						<span class="ml-2 align-middle rounded-full border border-amber-400 bg-amber-50 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-amber-700">
+							Example
+						</span>
+					)
+				}
 			</p>
 		</div>
 	</div>
