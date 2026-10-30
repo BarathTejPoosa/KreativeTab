@@ -1,7 +1,6 @@
 // Delivered by Originkit · stack: nextjs · styling: tailwind
 "use client";
 
-import { GlowBackground } from "@/components/originkit/ui/hero-10/glow-background";
 import { HeroContent } from "@/components/originkit/ui/hero-10/hero-content";
 import { PixelBackground } from "@/components/originkit/ui/hero-10/pixel-background";
 import { PrismStage } from "@/components/originkit/ui/hero-10/prism-stage";
@@ -21,8 +20,6 @@ export const Section16Hero = (props: Hero10Props) => {
       aria-label="Digup AI hero"
       className="relative isolate min-h-screen w-full overflow-hidden bg-[#091009]"
     >
-      {/* Soft green atmosphere — matches Figma better than a hard linear gradient */}
-      <GlowBackground />
       <PixelBackground />
       <PrismStage />
 

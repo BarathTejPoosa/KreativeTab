@@ -93,7 +93,6 @@ const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 		data-cursor-theme="dark"
 	>
 		<div class="kt-grid pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
-		<div class="kt-glow pointer-events-none absolute -right-40 -top-40 -z-10 h-[38rem] w-[38rem] rounded-full" aria-hidden="true"></div>
 		<div class="mx-auto w-full max-w-[90rem] px-5 pb-16 pt-36 lg:px-10 lg:pb-24 lg:pt-48">
 			<p class="m-0 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-flare">
 				<span class="h-2 w-2 rounded-full bg-brand-flare"></span>{eyebrow}
@@ -247,7 +246,6 @@ const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 		<section class="px-5 pb-20 lg:px-10 lg:pb-28">
 			<div class="relative mx-auto max-w-[90rem] overflow-hidden rounded-[2rem] bg-black px-6 py-16 text-white" data-cursor-theme="dark sm:px-12 lg:px-20 lg:py-24">
 				<div class="kt-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
-				<div class="kt-glow pointer-events-none absolute -bottom-48 -left-24 h-[30rem] w-[30rem] rounded-full" aria-hidden="true"></div>
 				<div class="relative flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
 					<div>
 						<h2 class="m-0 max-w-3xl font-display text-[clamp(2.25rem,5.5vw,5rem)] font-semibold leading-[0.98] tracking-tight !text-white">{ctaTitle}</h2>
@@ -278,11 +276,6 @@ const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 			linear-gradient(90deg, rgba(0, 0, 0, 0.07) 1px, transparent 1px);
 		background-size: 48px 48px;
 	}
-	.kt-glow {
-		background: radial-gradient(circle, rgba(139, 230, 125, 0.35), transparent 65%);
-		filter: blur(20px);
-		animation: kt-float 12s ease-in-out infinite alternate;
-	}
 	.kt-ticker-track {
 		animation: kt-marquee 40s linear infinite;
 	}
@@ -297,14 +290,8 @@ const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 			transform: translateX(calc(-50% - 1.25rem));
 		}
 	}
-	@keyframes kt-float {
-		to {
-			transform: translate(-60px, 60px) scale(1.1);
-		}
-	}
 	@media (prefers-reduced-motion: reduce) {
-		.kt-ticker-track,
-		.kt-glow {
+		.kt-ticker-track {
 			animation: none;
 		}
 	}
