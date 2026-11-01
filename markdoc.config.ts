@@ -16,11 +16,11 @@ export default defineMarkdocConfig({
 			render: component("./src/components/primitives/Title.astro"),
 		},
 		link: {
-			render: "a",
+			render: component("./src/components/primitives/MarkdocLink.astro"),
 			attributes: {
-				href: { type: String },
-				target: { type: String, default: "_blank" },
-				rel: { type: String, default: "noopener noreferrer" },
+				href: { type: String, render: "href" },
+				target: { type: String, render: "target" },
+				rel: { type: String, render: "rel" },
 			},
 		},
 	},

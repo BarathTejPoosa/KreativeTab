@@ -11,8 +11,8 @@ const showNews = await hasPublishedPosts(currentLocale);
 const navPages = header.pages.filter((page) => showNews || !isNewsLink(page.link));
 const it = currentLocale === "it";
 const t = it
-	? { haveProject: "Hai un progetto?", services: "Servizi", explore: "Esplora", talk: "Parliamo", form: "Scrivici dal modulo", rights: "Tutti i diritti riservati.", location: "Derby, UK" }
-	: { haveProject: "Have a project?", services: "Services", explore: "Explore", talk: "Start a conversation", form: "Use the contact form", rights: "All rights reserved.", location: "Derby, UK" };
+	? { haveProject: "Hai un progetto?", services: "Servizi", explore: "Esplora", talk: "Parliamo", form: "Scrivici dal modulo", rights: "Tutti i diritti riservati.", location: "Derby, UK", privacy: "Privacy", terms: "Termini" }
+	: { haveProject: "Have a project?", services: "Services", explore: "Explore", talk: "Start a conversation", form: "Use the contact form", rights: "All rights reserved.", location: "Derby, UK", privacy: "Privacy", terms: "Terms" };
 const primaryAction = footer.buttons?.[0];
 
 function getTranslatedUrl(locale: string): string {
@@ -90,8 +90,8 @@ function getTranslatedUrl(locale: string): string {
 					{locales.map((locale) => (
 						<a href={getTranslatedUrl(locale)} class:list={["uppercase transition-colors hover:text-white", locale === currentLocale && "text-brand-flare"]}>{locale}</a>
 					))}
-					<a href="/privacy" class="transition-colors hover:text-white">Privacy</a>
-					<a href="/terms" class="transition-colors hover:text-white">Terms</a>
+					<a href={translatePath(currentLocale, "/privacy")} class="transition-colors hover:text-white">{t.privacy}</a>
+					<a href={translatePath(currentLocale, "/terms")} class="transition-colors hover:text-white">{t.terms}</a>
 				</div>
 			</div>
 		</Container>

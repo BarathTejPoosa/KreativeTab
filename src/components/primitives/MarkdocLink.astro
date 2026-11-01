@@ -1,0 +1,7 @@
+---
+// Content links: external sites open in a new tab, internal and mailto links stay in the same tab.
+const { href = "", target, rel } = Astro.props as { href?: string; target?: string; rel?: string };
+const external = /^https?:\/\//.test(href);
+---
+
+<a href={href} target={target ?? (external ? "_blank" : undefined)} rel={rel ?? (external ? "noopener noreferrer" : undefined)}><slot /></a>
