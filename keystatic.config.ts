@@ -258,15 +258,16 @@ const pageComponents = {
 							schema: {
 								title: fields.text({
 									label: "Title",
-									defaultValue: "Three services, done properly.",
+									defaultValue: "Four services, fixed prices.",
 									validation: {
 										isRequired: true,
 									},
 								}),
 								services: fields.array(
 									fields.object({
-										title: fields.text({ label: "Title", description: "Branding, Web Design or Product Design" }),
+										title: fields.text({ label: "Title", description: "Brand kits, Websites, Web apps or Mobile apps" }),
 										description: fields.text({ label: "Description", multiline: true }),
+										price: fields.text({ label: "Price line (optional)", description: "e.g. From £295. Links to the Pricing page." }),
 										icon: fields.image({
 											label: "Icon",
 											directory: "src/assets/pages",
@@ -294,18 +295,18 @@ const pageComponents = {
 								secondaryLabel: fields.text({ label: "Second button text (links to Works)", defaultValue: "View our work" }),
 								services: fields.array(
 									fields.object({
-										title: fields.text({ label: "Service name", description: "Branding, Web Design or Product Design" }),
+										title: fields.text({ label: "Service name", description: "Brand kits, Websites, Web apps or Mobile apps" }),
 										category: fields.select({
 											label: "Portfolio category for the 'See work' link",
 											options: [
-												{ label: "Branding", value: "Branding" },
-												{ label: "Social & Campaigns", value: "Social & Campaigns" },
-												{ label: "Motion", value: "Motion" },
-												{ label: "Web", value: "Web" },
-												{ label: "Product", value: "Product" },
+												{ label: "Brand kits", value: "Brand kits" },
+												{ label: "Websites", value: "Websites" },
+												{ label: "Web apps", value: "Web apps" },
+												{ label: "Mobile apps", value: "Mobile apps" },
 											],
-											defaultValue: "Branding",
+											defaultValue: "Websites",
 										}),
+										price: fields.text({ label: "Price line (optional)", description: "e.g. From £295. Links to the Pricing page." }),
 										pitch: fields.text({ label: "Short pitch", multiline: true }),
 										deliverables: fields.array(fields.text({ label: "Deliverable" }), {
 											label: "Deliverables",
@@ -348,11 +349,114 @@ const pageComponents = {
 								ctaLink: fields.text({ label: "Call to action link", defaultValue: "/contact" }),
 							},
 						}),
-						VideoEffect: block({
-							label: "VideoEffect",
-							description: "VideoEffect",
+						Pricing: block({
+							label: "Pricing page (packages)",
+							description: "Fixed-price packages grouped by service, add-ons, payment terms, FAQ and call to action",
 							icon: GeneralIcon({ ariaHidden: true }),
-							schema: {},
+							schema: {
+								eyebrow: fields.text({ label: "Eyebrow", defaultValue: "Pricing" }),
+								title: fields.text({ label: "Headline", validation: { isRequired: true } }),
+								subtitle: fields.text({ label: "Intro", multiline: true }),
+								notice: fields.text({
+									label: "Notice banner (optional)",
+									description: "Shown above the packages, e.g. a note that prices are a draft. Leave empty to hide.",
+									multiline: true,
+								}),
+								groups: fields.array(
+									fields.object({
+										key: fields.select({
+											label: "Group",
+											options: [
+												{ label: "Websites", value: "websites" },
+												{ label: "Brand kits", value: "brand-kits" },
+												{ label: "Web apps", value: "web-apps" },
+												{ label: "Mobile apps", value: "mobile-apps" },
+												{ label: "Care plans", value: "care-plans" },
+											],
+											defaultValue: "websites",
+										}),
+										title: fields.text({ label: "Group title" }),
+										intro: fields.text({ label: "Group intro", multiline: true }),
+										note: fields.text({ label: "Small print under the group (optional)", multiline: true }),
+									}),
+									{ label: "Package groups (order on the page)", itemLabel: (props) => props.fields.title.value },
+								),
+								packages: fields.array(
+									fields.object({
+										group: fields.select({
+											label: "Group",
+											options: [
+												{ label: "Websites", value: "websites" },
+												{ label: "Brand kits", value: "brand-kits" },
+												{ label: "Web apps", value: "web-apps" },
+												{ label: "Mobile apps", value: "mobile-apps" },
+												{ label: "Care plans", value: "care-plans" },
+											],
+											defaultValue: "websites",
+										}),
+										name: fields.text({ label: "Package name", validation: { isRequired: true } }),
+										price: fields.text({ label: "Price", description: "e.g. £595, £895–£1,295 or from £3,995" }),
+										period: fields.text({ label: "Price note", description: "e.g. one-off, per month" }),
+										turnaround: fields.text({ label: "Turnaround", description: "e.g. 7–10 working days" }),
+										summary: fields.text({ label: "Short summary", multiline: true }),
+										features: fields.array(fields.text({ label: "Feature" }), {
+											label: "What's included",
+											itemLabel: (props) => props.value,
+										}),
+										revisions: fields.text({ label: "Revisions / warranty" }),
+										notIncluded: fields.text({ label: "Not included", multiline: true }),
+										featured: fields.checkbox({ label: "Highlight this package", defaultValue: false }),
+										ctaLabel: fields.text({ label: "Button text", defaultValue: "Get started" }),
+									}),
+									{ label: "Packages", itemLabel: (props) => `${props.fields.name.value} (${props.fields.price.value})` },
+								),
+								addOnsTitle: fields.text({ label: "Add-ons title" }),
+								addOns: fields.array(
+									fields.object({
+										name: fields.text({ label: "Add-on" }),
+										price: fields.text({ label: "Price" }),
+									}),
+									{ label: "Add-ons", itemLabel: (props) => `${props.fields.name.value} (${props.fields.price.value})` },
+								),
+								termsTitle: fields.text({ label: "Terms title" }),
+								terms: fields.array(fields.text({ label: "Term", multiline: true }), {
+									label: "How payment and scope work",
+									itemLabel: (props) => props.value,
+								}),
+								faqTitle: fields.text({ label: "FAQ title" }),
+								faqs: fields.array(
+									fields.object({
+										question: fields.text({ label: "Question" }),
+										answer: fields.text({ label: "Answer", multiline: true }),
+									}),
+									{ label: "FAQ", itemLabel: (props) => props.fields.question.value },
+								),
+								ctaTitle: fields.text({ label: "Call to action title" }),
+								ctaText: fields.text({ label: "Call to action text", multiline: true }),
+								ctaLabel: fields.text({ label: "Call to action button", defaultValue: "Start a project" }),
+								ctaLink: fields.text({ label: "Call to action link", defaultValue: "/contact" }),
+							},
+						}),
+						WhyUs: block({
+							label: "Why us (reasons + pricing teaser)",
+							description: "Short list of reasons to choose KreativeTab, with a link to the Pricing page",
+							icon: GeneralIcon({ ariaHidden: true }),
+							schema: {
+								eyebrow: fields.text({ label: "Eyebrow", defaultValue: "Why KreativeTab" }),
+								title: fields.text({ label: "Title", validation: { isRequired: true } }),
+								items: fields.array(
+									fields.object({
+										title: fields.text({ label: "Reason" }),
+										description: fields.text({ label: "Description", multiline: true }),
+									}),
+									{ label: "Reasons", itemLabel: (props) => props.fields.title.value },
+								),
+								priceLabel: fields.text({ label: "Price teaser label", defaultValue: "Websites from" }),
+								price: fields.text({ label: "Price teaser", defaultValue: "£295" }),
+								priceNote: fields.text({ label: "Price teaser note", multiline: true }),
+								buttonLabel: fields.text({ label: "Button text", defaultValue: "See packages and prices" }),
+								buttonLink: fields.text({ label: "Button link", defaultValue: "/pricing" }),
+							},
 						}),
 						RecentWork: block({
 							label: "RecentWork",
@@ -621,11 +725,10 @@ const pagesCollection = (locale: LocaleKey, prefix: string) =>
 
 /** Categories used for the portfolio filter chips on /works. */
 const workCategories = [
-	"Branding",
-	"Social & Campaigns",
-	"Motion",
-	"Web",
-	"Product",
+	"Brand kits",
+	"Websites",
+	"Web apps",
+	"Mobile apps",
 ] as const;
 
 const workImage = (label = "Image") =>
@@ -664,11 +767,11 @@ const worksCollection = (locale: LocaleKey, prefix: string) =>
 				label: "Category",
 				description: "Used for the filter chips on the Works page.",
 				options: workCategories.map((value) => ({ label: value, value })),
-				defaultValue: "Branding",
+				defaultValue: "Websites",
 			}),
 			tags: fields.array(fields.text({ label: "Tag" }), {
 				label: "Tags",
-				description: "Services or tools, e.g. Logo, Identity, Figma.",
+				description: "Services or tools, e.g. Logo, Astro, Next.js, Expo.",
 				itemLabel: (props) => props.value,
 			}),
 			year: fields.integer({
@@ -865,7 +968,7 @@ const footerSingleton = (locale: LocaleKey, prefix: string) =>
 				label: "Tagline",
 				description: "Short line under the logo.",
 				multiline: true,
-				defaultValue: "Creative studio for branding, web design and product design.",
+				defaultValue: "Derby-based studio for brand kits, websites, web apps and mobile apps.",
 			}),
 			services: fields.array(
 				fields.object({

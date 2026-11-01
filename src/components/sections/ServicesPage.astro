@@ -1,11 +1,13 @@
 ---
 import { Image } from "astro:assets";
+import { getSortedWorks } from "@/lib/collection-helpers";
 import { translatePath } from "@/lib/localization-helpers";
 import { defaultLocale } from "site";
 
 interface ServiceItem {
 	title: string;
 	category?: string;
+	price?: string;
 	pitch?: string;
 	deliverables?: string[];
 	image?: string;
@@ -82,6 +84,12 @@ const faqSchema = faqs.length
 		})
 	: "";
 const seeWork = it ? "Vedi i lavori" : "See work";
+const seePrices = it ? "Vedi pacchetti e prezzi" : "See packages and prices";
+// Only link to the portfolio when there is at least one project in that category
+const works = await getSortedWorks(locale);
+const usedCategories = new Set(works.map((w) => w.data.category));
+const pricingHref = (s: ServiceItem) =>
+	`${localize("/pricing")}${s.category ? `#${slugify(s.category)}` : ""}`;
 const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 ---
 
@@ -115,7 +123,7 @@ const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 				)}
 			</div>
 
-			<nav class="mt-16 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-3" aria-label={eyebrow}>
+			<nav class="mt-16 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4" aria-label={eyebrow}>
 				{services.map((s, i) => (
 					<a href={`#${slugify(s.title)}`} class="group flex items-center justify-between gap-4 bg-black px-6 py-5 transition hover:bg-white/[0.04]">
 						<span class="flex items-baseline gap-4">
@@ -152,15 +160,16 @@ const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 			{services.map((s, i) => {
 				const img = resolved[i];
 				const flip = i % 2 === 1;
-				const href = s.category
-					? `${localize("/works")}?category=${encodeURIComponent(s.category)}`
-					: localize("/works");
+				const hasWork = !!s.category && usedCategories.has(s.category);
+				const href = hasWork
+					? `${localize("/works")}?category=${encodeURIComponent(s.category!)}`
+					: pricingHref(s);
 				return (
 					<section id={slugify(s.title)} class="scroll-mt-28 grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
 						<a
 							href={href}
 							class:list={["kt-visual group relative block overflow-hidden rounded-3xl bg-black lg:col-span-7", flip && "lg:order-2"]}
-							aria-label={`${seeWork}: ${s.title}`}
+							aria-label={`${hasWork ? seeWork : seePrices}: ${s.title}`}
 						>
 							{img ? (
 								<Image src={img} alt={s.imageAlt ?? s.title} widths={[640, 1000, 1400]} sizes="(min-width: 1024px) 58vw, 100vw" class="aspect-[4/3] h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]" />
@@ -173,6 +182,11 @@ const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 						<div class:list={["lg:col-span-5", flip && "lg:order-1"]}>
 							<p class="m-0 font-mono text-sm text-black/50">{pad(i)} / {pad(services.length - 1)}</p>
 							<h2 class="m-0 mt-3 font-display text-[clamp(2.25rem,4.5vw,4rem)] font-semibold leading-[1] tracking-tight">{s.title}</h2>
+							{s.price && (
+								<a href={pricingHref(s)} class="mt-5 inline-flex items-center gap-2 rounded-full border border-black px-4 py-1.5 text-sm font-semibold transition hover:bg-black hover:text-brand-flare">
+									{s.price}<span aria-hidden="true">→</span>
+								</a>
+							)}
 							{s.pitch && <p class="mb-0 mt-6 max-w-md text-lg leading-relaxed text-black/70">{s.pitch}</p>}
 							{s.deliverables && s.deliverables.length > 0 && (
 								<>
@@ -187,10 +201,17 @@ const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 									</ul>
 								</>
 							)}
-							<a href={href} class="group mt-8 inline-flex items-center gap-3 rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-flare hover:text-black">
-								{s.linkLabel || seeWork}
-								<span class="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
-							</a>
+							<div class="mt-8 flex flex-wrap gap-3">
+								<a href={pricingHref(s)} class="group inline-flex items-center gap-3 rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-flare hover:text-black">
+									{seePrices}
+									<span class="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+								</a>
+								{hasWork && (
+									<a href={href} class="inline-flex items-center gap-3 rounded-full border border-black/25 px-6 py-3 text-sm font-semibold transition hover:border-black">
+										{s.linkLabel || seeWork}
+									</a>
+								)}
+							</div>
 						</div>
 					</section>
 				);
@@ -244,7 +265,7 @@ const deliverablesLabel = it ? "Cosa ricevi" : "What you get";
 	{/* CTA */}
 	{ctaTitle && (
 		<section class="px-5 pb-20 lg:px-10 lg:pb-28">
-			<div class="relative mx-auto max-w-[90rem] overflow-hidden rounded-[2rem] bg-black px-6 py-16 text-white" data-cursor-theme="dark sm:px-12 lg:px-20 lg:py-24">
+			<div class="relative mx-auto max-w-[90rem] overflow-hidden rounded-[2rem] bg-black px-6 py-16 text-white sm:px-12 lg:px-20 lg:py-24" data-cursor-theme="dark">
 				<div class="kt-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
 				<div class="relative flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
 					<div>

@@ -1,0 +1,338 @@
+---
+import { translatePath } from "@/lib/localization-helpers";
+import { defaultLocale } from "site";
+
+type GroupKey = "websites" | "brand-kits" | "web-apps" | "mobile-apps" | "care-plans";
+
+interface Group {
+	key: GroupKey;
+	title: string;
+	intro?: string;
+	note?: string;
+}
+
+interface Package {
+	group: GroupKey;
+	name: string;
+	price?: string;
+	period?: string;
+	turnaround?: string;
+	summary?: string;
+	features?: string[];
+	revisions?: string;
+	notIncluded?: string;
+	featured?: boolean;
+	ctaLabel?: string;
+}
+
+interface Props {
+	eyebrow?: string;
+	title: string;
+	subtitle?: string;
+	notice?: string;
+	groups?: Group[];
+	packages: Package[];
+	addOnsTitle?: string;
+	addOns?: { name: string; price: string }[];
+	termsTitle?: string;
+	terms?: string[];
+	faqTitle?: string;
+	faqs?: { question: string; answer: string }[];
+	ctaTitle?: string;
+	ctaText?: string;
+	ctaLabel?: string;
+	ctaLink?: string;
+}
+
+const {
+	eyebrow = "Pricing",
+	title,
+	subtitle,
+	notice,
+	groups = [],
+	packages = [],
+	addOnsTitle,
+	addOns = [],
+	termsTitle,
+	terms = [],
+	faqTitle,
+	faqs = [],
+	ctaTitle,
+	ctaText,
+	ctaLabel,
+	ctaLink = "/contact",
+} = Astro.props;
+
+const locale = Astro.currentLocale ?? defaultLocale;
+const it = locale === "it";
+const localize = (href: string) =>
+	href.startsWith("/") && !href.startsWith(`/${locale}/`) ? translatePath(locale, href) : href;
+
+const t = {
+	turnaround: it ? "Tempi" : "Turnaround",
+	included: it ? "Cosa include" : "What's included",
+	revisions: it ? "Revisioni" : "Revisions",
+	notIncluded: it ? "Non incluso" : "Not included",
+	cta: it ? "Inizia" : "Get started",
+	featured: it ? "Consigliato" : "Recommended",
+	jump: it ? "Vai a" : "Jump to",
+};
+
+// Groups in the order set in the CMS; any package group without a group entry is appended.
+const orderedGroups: Group[] = [...groups];
+for (const p of packages) {
+	if (!orderedGroups.some((g) => g.key === p.group)) orderedGroups.push({ key: p.group, title: p.group });
+}
+const sections = orderedGroups
+	.map((g) => ({ ...g, items: packages.filter((p) => p.group === g.key) }))
+	.filter((g) => g.items.length > 0);
+
+const contactHref = (p: Package) =>
+	`${localize(ctaLink)}?package=${encodeURIComponent(p.name)}`;
+
+// Structured data: an OfferCatalog of fixed-price packages (GBP).
+const toNumbers = (price = "") =>
+	(price.match(/\d[\d,.]*/g) ?? []).map((n) => Number(n.replace(/[,.](?=\d{3}\b)/g, "").replace(",", ".")));
+const offer = (p: Package) => {
+	const nums = toNumbers(p.price);
+	const base = {
+		"@type": "Offer",
+		name: p.name,
+		description: p.summary,
+		priceCurrency: "GBP",
+	};
+	if (nums.length === 0) return base;
+	const isFrom = /from|da/i.test(p.price ?? "");
+	if (nums.length === 1 && !isFrom) return { ...base, price: nums[0] };
+	return {
+		...base,
+		priceSpecification: {
+			"@type": "PriceSpecification",
+			priceCurrency: "GBP",
+			minPrice: nums[0],
+			...(nums[1] ? { maxPrice: nums[1] } : {}),
+		},
+	};
+};
+const catalog = JSON.stringify({
+	"@context": "https://schema.org",
+	"@type": "OfferCatalog",
+	name: title.replace(/<[^>]+>/g, ""),
+	itemListElement: sections.map((g) => ({
+		"@type": "OfferCatalog",
+		name: g.title,
+		itemListElement: g.items.map(offer),
+	})),
+});
+const faqSchema = faqs.length
+	? JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "FAQPage",
+			mainEntity: faqs.map((f) => ({
+				"@type": "Question",
+				name: f.question,
+				acceptedAnswer: { "@type": "Answer", text: f.answer },
+			})),
+		})
+	: "";
+---
+
+<div class="kt-pricing no-reveal">
+	<script type="application/ld+json" is:inline set:html={catalog} />
+	{faqSchema && <script type="application/ld+json" is:inline set:html={faqSchema} />}
+
+	{/* Hero */}
+	<section class="relative isolate overflow-hidden bg-black text-white" data-cursor-theme="dark">
+		<div class="kt-grid pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+		<div class="mx-auto w-full max-w-[90rem] px-5 pb-16 pt-36 lg:px-10 lg:pb-20 lg:pt-48">
+			<p class="m-0 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-flare">
+				<span class="h-2 w-2 rounded-full bg-brand-flare"></span>{eyebrow}
+			</p>
+			<h1
+				class="m-0 mt-6 max-w-5xl font-display text-[clamp(2.6rem,7vw,6.25rem)] font-semibold leading-[0.98] tracking-tight !text-white"
+				set:html={title}
+			/>
+			{subtitle && <p class="mb-0 mt-8 max-w-2xl text-lg leading-relaxed text-white/65">{subtitle}</p>}
+
+			{sections.length > 1 && (
+				<nav class="mt-12 flex flex-wrap gap-2" aria-label={`${t.jump}: ${eyebrow}`}>
+					{sections.map((g) => (
+						<a href={`#${g.key}`} class="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2 text-sm font-semibold text-white transition hover:border-brand-flare hover:text-brand-flare">
+							{g.title}<span class="text-white/40" aria-hidden="true">↓</span>
+						</a>
+					))}
+				</nav>
+			)}
+		</div>
+	</section>
+
+	{notice && (
+		<div class="border-b border-black bg-brand-flare px-5 py-4 text-black lg:px-10" role="note">
+			<p class="mx-auto m-0 max-w-[90rem] text-sm font-semibold leading-relaxed" set:html={notice} />
+		</div>
+	)}
+
+	{/* Package groups */}
+	<div class="mx-auto w-full max-w-[90rem] px-5 py-16 lg:px-10 lg:py-24">
+		<div class="flex flex-col gap-20 lg:gap-28">
+			{sections.map((g) => (
+				<section id={g.key} class="scroll-mt-28">
+					<div class="grid gap-6 border-b border-black pb-8 lg:grid-cols-12 lg:items-end">
+						<h2 class="m-0 font-display text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1] tracking-tight lg:col-span-5">{g.title}</h2>
+						{g.intro && <p class="m-0 max-w-2xl text-lg leading-relaxed text-black/70 lg:col-span-7">{g.intro}</p>}
+					</div>
+					<div class:list={[
+						"mt-10 grid gap-5",
+						g.items.length === 1 ? "lg:max-w-xl" : g.items.length === 2 ? "md:grid-cols-2" : g.items.length === 3 ? "md:grid-cols-2 xl:grid-cols-3" : "md:grid-cols-2 xl:grid-cols-4",
+					]}>
+						{g.items.map((p) => (
+							<article class:list={[
+								"flex flex-col rounded-3xl border p-7 lg:p-8",
+								p.featured ? "border-black bg-black text-white" : "border-black/15 bg-white text-black",
+							]} data-cursor-theme={p.featured ? "dark" : undefined}>
+								<div class="flex items-start justify-between gap-3">
+									<h3 class:list={["m-0 text-xl font-semibold leading-tight", p.featured && "!text-white"]}>{p.name}</h3>
+									{p.featured && <span class="shrink-0 rounded-full bg-brand-flare px-3 py-1 text-xs font-semibold text-black">{t.featured}</span>}
+								</div>
+								<p class="m-0 mt-6 flex flex-wrap items-baseline gap-x-2">
+									<span class:list={["font-display text-[clamp(2.25rem,3.2vw,2.75rem)] font-semibold leading-none tracking-tight", p.featured ? "text-brand-flare" : "text-black"]}>{p.price}</span>
+									{p.period && <span class:list={["text-sm", p.featured ? "text-white/60" : "text-black/55"]}>{p.period}</span>}
+								</p>
+								{p.turnaround && (
+									<p class:list={["m-0 mt-3 text-sm font-medium", p.featured ? "text-white/70" : "text-black/60"]}>
+										<span class="font-mono text-xs uppercase tracking-wider">{t.turnaround}:</span> {p.turnaround}
+									</p>
+								)}
+								{p.summary && <p class:list={["mb-0 mt-5 text-base leading-relaxed", p.featured ? "text-white/75" : "text-black/70"]}>{p.summary}</p>}
+								{p.features && p.features.length > 0 && (
+									<ul class="m-0 mt-6 flex list-none flex-col gap-0 p-0" aria-label={t.included}>
+										{p.features.map((f) => (
+											<li class:list={["flex items-start gap-3 border-b py-2.5 text-sm leading-snug", p.featured ? "border-white/10" : "border-black/10"]}>
+												<span class:list={["mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[0.6rem]", p.featured ? "bg-brand-flare text-black" : "bg-black text-brand-flare"]} aria-hidden="true">✓</span>
+												<span>{f}</span>
+											</li>
+										))}
+									</ul>
+								)}
+								<dl class="m-0 mt-5 flex flex-col gap-3 text-sm">
+									{p.revisions && (
+										<div>
+											<dt class:list={["font-mono text-xs uppercase tracking-wider", p.featured ? "text-white/50" : "text-black/50"]}>{t.revisions}</dt>
+											<dd class="m-0 mt-1">{p.revisions}</dd>
+										</div>
+									)}
+									{p.notIncluded && (
+										<div>
+											<dt class:list={["font-mono text-xs uppercase tracking-wider", p.featured ? "text-white/50" : "text-black/50"]}>{t.notIncluded}</dt>
+											<dd class:list={["m-0 mt-1", p.featured ? "text-white/70" : "text-black/65"]}>{p.notIncluded}</dd>
+										</div>
+									)}
+								</dl>
+								<div class="mt-auto pt-8">
+									<a
+										href={contactHref(p)}
+										class:list={[
+											"group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition",
+											p.featured ? "bg-brand-flare text-black hover:bg-white" : "bg-black text-white hover:bg-brand-flare hover:text-black",
+										]}
+									>
+										{p.ctaLabel || t.cta}<span class="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+									</a>
+								</div>
+							</article>
+						))}
+					</div>
+					{g.note && <p class="mb-0 mt-6 max-w-3xl text-sm leading-relaxed text-black/60">{g.note}</p>}
+				</section>
+			))}
+		</div>
+	</div>
+
+	{/* Add-ons and terms */}
+	{(addOns.length > 0 || terms.length > 0) && (
+		<section class="bg-black py-20 text-white lg:py-28" data-cursor-theme="dark">
+			<div class="mx-auto grid w-full max-w-[90rem] gap-14 px-5 lg:grid-cols-12 lg:gap-16 lg:px-10">
+				{addOns.length > 0 && (
+					<div class="lg:col-span-7">
+						{addOnsTitle && <h2 class="m-0 font-display text-[clamp(1.75rem,3vw,2.75rem)] font-semibold leading-[1.05] tracking-tight !text-white">{addOnsTitle}</h2>}
+						<ul class="m-0 mt-8 list-none p-0">
+							{addOns.map((a) => (
+								<li class="flex items-baseline justify-between gap-6 border-b border-white/10 py-4">
+									<span class="text-base text-white/80">{a.name}</span>
+									<span class="shrink-0 font-mono text-sm font-semibold text-brand-flare">{a.price}</span>
+								</li>
+							))}
+						</ul>
+					</div>
+				)}
+				{terms.length > 0 && (
+					<div class:list={[addOns.length > 0 ? "lg:col-span-5" : "lg:col-span-12"]}>
+						{termsTitle && <h2 class="m-0 font-display text-[clamp(1.75rem,3vw,2.75rem)] font-semibold leading-[1.05] tracking-tight !text-white">{termsTitle}</h2>}
+						<ol class="m-0 mt-8 flex list-none flex-col gap-4 p-0">
+							{terms.map((term, i) => (
+								<li class="flex gap-4 rounded-2xl border border-white/10 p-5">
+									<span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-brand-flare/50 font-mono text-xs text-brand-flare">{String(i + 1).padStart(2, "0")}</span>
+									<span class="text-base leading-relaxed text-white/75">{term}</span>
+								</li>
+							))}
+						</ol>
+					</div>
+				)}
+			</div>
+		</section>
+	)}
+
+	{/* FAQ */}
+	{faqs.length > 0 && (
+		<section class="mx-auto grid w-full max-w-[90rem] gap-10 px-5 py-20 lg:grid-cols-12 lg:px-10 lg:py-28">
+			<div class="lg:col-span-4">
+				<p class="m-0 text-xs font-semibold uppercase tracking-[0.2em] text-black/50">FAQ</p>
+				{faqTitle && <h2 class="m-0 mt-6 font-display text-[clamp(2rem,3.5vw,3rem)] font-semibold leading-[1.05] tracking-tight">{faqTitle}</h2>}
+			</div>
+			<div class="lg:col-span-8">
+				{faqs.map((f, i) => (
+					<details class="kt-faq group border-b border-black/15" open={i === 0}>
+						<summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-semibold lg:text-xl">
+							{f.question}
+							<span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/20 text-xl transition group-open:rotate-45 group-open:border-black group-open:bg-black group-open:text-brand-flare" aria-hidden="true">+</span>
+						</summary>
+						<p class="mb-0 mt-0 max-w-2xl pb-6 text-base leading-relaxed text-black/70">{f.answer}</p>
+					</details>
+				))}
+			</div>
+		</section>
+	)}
+
+	{/* CTA */}
+	{ctaTitle && (
+		<section class="px-5 pb-20 lg:px-10 lg:pb-28">
+			<div class="relative mx-auto max-w-[90rem] overflow-hidden rounded-[2rem] bg-black px-6 py-16 text-white sm:px-12 lg:px-20 lg:py-24" data-cursor-theme="dark">
+				<div class="kt-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+				<div class="relative flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+					<div>
+						<h2 class="m-0 max-w-3xl font-display text-[clamp(2.25rem,5.5vw,5rem)] font-semibold leading-[0.98] tracking-tight !text-white">{ctaTitle}</h2>
+						{ctaText && <p class="mb-0 mt-6 max-w-lg text-lg text-white/65">{ctaText}</p>}
+					</div>
+					{ctaLabel && (
+						<a href={localize(ctaLink)} class="group inline-flex shrink-0 items-center gap-3 self-start rounded-full bg-brand-flare px-8 py-4 text-base font-semibold text-black transition hover:bg-white lg:self-auto">
+							{ctaLabel}<span class="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+						</a>
+					)}
+				</div>
+			</div>
+		</section>
+	)}
+</div>
+
+<style>
+	.kt-grid {
+		background-image:
+			linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+		background-size: 56px 56px;
+		mask-image: radial-gradient(ellipse at 70% 30%, black 20%, transparent 75%);
+	}
+	.kt-faq summary::-webkit-details-marker {
+		display: none;
+	}
+</style>

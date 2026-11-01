@@ -1,5 +1,7 @@
 ---
 import { Image } from "astro:assets";
+import { translatePath } from "@/lib/localization-helpers";
+import { defaultLocale } from "site";
 
 interface Props {
 	title: string;
@@ -7,10 +9,14 @@ interface Props {
 		title: string;
 		description: string;
 		icon: string;
+		price?: string;
 	}[];
 }
 
 const { title, services } = Astro.props;
+const locale = Astro.currentLocale ?? defaultLocale;
+const it = locale === "it";
+const pricingHref = translatePath(locale, "/pricing");
 
 const images = import.meta.glob<{ default: ImageMetadata }>(
 	"/src/assets/pages/**/*.{webp,jpeg,jpg,png,gif,svg}",
@@ -25,7 +31,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
 	<div class="mx-auto w-full max-w-[90rem] px-5 lg:px-10">
 		<div class="flex flex-col">
 			<p class="text-xs font-semibold uppercase tracking-[0.2em] text-brand-flare">
-				What we do
+				{it ? "Cosa facciamo" : "What we do"}
 			</p>
 			<h2
 				class="m-0 mt-8 max-w-3xl font-display text-[clamp(1.75rem,2.8vw,2.375rem)] font-semibold leading-tight tracking-normal text-white"
@@ -33,9 +39,9 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
 			/>
 		</div>
 
-		<div class="mt-14 grid gap-x-8 gap-y-12 md:grid-cols-3">
+		<div class="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
 			{
-				services.map(({ title, description, icon }) => (
+				services.map(({ title, description, icon, price }) => (
 					<article class="py-8">
 						<div class="flex h-12 w-12 items-center justify-center bg-brand-flare">
 							<Image
@@ -50,6 +56,11 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
 						<p class="mb-0 mt-4 max-w-sm text-base leading-relaxed text-white/60">
 							{description}
 						</p>
+						{price && (
+							<a href={pricingHref} class="mt-6 inline-flex items-center gap-2 border-b border-brand-flare pb-1 text-sm font-semibold text-brand-flare transition-colors hover:text-white hover:border-white">
+								{price}<span aria-hidden="true">→</span>
+							</a>
+						)}
 					</article>
 				))
 			}

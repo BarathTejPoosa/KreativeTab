@@ -4,9 +4,10 @@ import Container from "@/components/primitives/Container.astro";
 import Link from "@/components/primitives/Link.astro";
 import { PrismStage } from "@/components/originkit/ui/hero-10/prism-stage";
 import { Image } from "astro:assets";
-import brandingImg from "@/assets/works/nexacore/01-logo.jpg";
-import webDesignImg from "@/assets/works/quantumflow/01-homepage.jpg";
-import productDesignImg from "@/assets/works/orbitpay/01-flow.jpg";
+import brandKitImg from "@/assets/pages/services/branding.jpg";
+import websiteImg from "@/assets/pages/services/web-design.jpg";
+import webAppImg from "@/assets/pages/services/web-apps.jpg";
+import mobileAppImg from "@/assets/pages/services/product-design.jpg";
 import { translatePath } from "@/lib/localization-helpers";
 import { defaultLocale } from "site";
 
@@ -20,9 +21,10 @@ const { title, subtitle, buttons = [] } = Astro.props;
 const locale = Astro.currentLocale ?? defaultLocale;
 const it = locale === "it";
 const services = [
-	{ label: "Branding", category: "Branding", img: brandingImg, text: it ? "Logo, identità, poster social e di campagna, motion graphics." : "Logos, identity, social and campaign posters, motion graphics." },
-	{ label: "Web Design", category: "Web", img: webDesignImg, text: it ? "Siti web progettati e sviluppati." : "Websites, designed and built." },
-	{ label: "Product Design", category: "Product", img: productDesignImg, text: it ? "UI/UX per app e prodotti, con flussi utente." : "App and product UI/UX, with product flows." },
+	{ label: it ? "Brand kit" : "Brand kits", anchor: it ? "brand-kit" : "brand-kits", img: brandKitImg, text: it ? "Logo, colori, font e linee guida." : "Logo, colours, fonts and guidelines." },
+	{ label: it ? "Siti web" : "Websites", anchor: it ? "siti-web" : "websites", img: websiteImg, text: it ? "Siti in Astro, testi e Google Business Profile inclusi." : "Astro sites with copy and Google Business Profile included." },
+	{ label: it ? "Web app" : "Web apps", anchor: it ? "web-app" : "web-apps", img: webAppImg, text: it ? "Strumenti e MVP in Next.js e React." : "Tools and MVPs built in Next.js and React." },
+	{ label: it ? "App mobile" : "Mobile apps", anchor: it ? "app-mobile" : "mobile-apps", img: mobileAppImg, text: it ? "App iPhone e Android in React Native (Expo)." : "iPhone and Android apps in React Native (Expo)." },
 ];
 ---
 
@@ -55,9 +57,9 @@ const services = [
 			</div>
 		</div>
 
-		<div class="pointer-events-auto grid gap-4 pt-7 pb-12 text-sm text-white/65 sm:grid-cols-3">
+		<div class="pointer-events-auto grid grid-cols-2 gap-4 pt-7 pb-12 text-sm text-white/65 sm:grid-cols-4">
 			{services.map((service) => (
-				<a href={`${translatePath(locale, "/works")}?category=${encodeURIComponent(service.category)}`} class="group relative w-fit transition-colors hover:text-white">
+				<a href={`${translatePath(locale, "/services")}#${service.anchor}`} class="group relative w-fit transition-colors hover:text-white">
 					<p>{service.label}</p>
 					<div class="absolute top-full left-0 mt-4 w-64 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 origin-top-left z-50 overflow-hidden shadow-2xl border border-white/10 bg-black/40 backdrop-blur-md">
 						<Image src={service.img} alt="" width={512} class="w-full h-32 object-cover" />

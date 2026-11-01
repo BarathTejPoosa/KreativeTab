@@ -1,0 +1,63 @@
+---
+import { translatePath } from "@/lib/localization-helpers";
+import { defaultLocale } from "site";
+
+interface Props {
+	eyebrow?: string;
+	title: string;
+	items?: { title: string; description?: string }[];
+	priceLabel?: string;
+	price?: string;
+	priceNote?: string;
+	buttonLabel?: string;
+	buttonLink?: string;
+}
+
+const {
+	eyebrow = "Why KreativeTab",
+	title,
+	items = [],
+	priceLabel,
+	price,
+	priceNote,
+	buttonLabel,
+	buttonLink = "/pricing",
+} = Astro.props;
+
+const locale = Astro.currentLocale ?? defaultLocale;
+const localize = (href: string) =>
+	href.startsWith("/") && !href.startsWith(`/${locale}/`) ? translatePath(locale, href) : href;
+const pad = (n: number) => String(n + 1).padStart(2, "0");
+---
+
+<section class="relative left-1/2 right-1/2 -mx-[50vw] w-screen border-y border-black/10 bg-brand-paper py-20 text-black lg:py-28" id="why-us">
+	<div class="mx-auto grid w-full max-w-[90rem] gap-12 px-5 lg:grid-cols-12 lg:gap-16 lg:px-10">
+		<div class="lg:col-span-7">
+			<p class="m-0 text-xs font-semibold uppercase tracking-[0.2em] text-black/50">{eyebrow}</p>
+			<h2 class="m-0 mt-6 max-w-2xl font-display text-[clamp(2rem,3.5vw,3.25rem)] font-semibold leading-[1.05] tracking-tight" set:html={title} />
+			<ol class="m-0 mt-12 grid list-none gap-x-10 p-0 sm:grid-cols-2">
+				{items.map((item, i) => (
+					<li class="border-t border-black/15 py-6">
+						<span class="font-mono text-xs text-black/50">{pad(i)}</span>
+						<h3 class="m-0 mt-3 text-xl font-semibold">{item.title}</h3>
+						{item.description && <p class="mb-0 mt-2 text-base leading-relaxed text-black/65">{item.description}</p>}
+					</li>
+				))}
+			</ol>
+		</div>
+		{(price || buttonLabel) && (
+			<aside class="flex flex-col justify-between rounded-3xl bg-black p-8 text-white lg:col-span-5 lg:p-12" data-cursor-theme="dark">
+				<div>
+					{priceLabel && <p class="m-0 text-xs font-semibold uppercase tracking-[0.2em] text-brand-flare">{priceLabel}</p>}
+					{price && <p class="m-0 mt-4 font-display text-[clamp(3.5rem,7vw,6rem)] font-semibold leading-none tracking-tight text-white">{price}</p>}
+					{priceNote && <p class="mb-0 mt-6 max-w-sm text-base leading-relaxed text-white/65">{priceNote}</p>}
+				</div>
+				{buttonLabel && (
+					<a href={localize(buttonLink)} class="group mt-10 inline-flex items-center gap-3 self-start rounded-full bg-brand-flare px-6 py-3 text-sm font-semibold text-black transition hover:bg-white">
+						{buttonLabel}<span class="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+					</a>
+				)}
+			</aside>
+		)}
+	</div>
+</section>

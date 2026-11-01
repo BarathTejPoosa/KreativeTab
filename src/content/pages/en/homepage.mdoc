@@ -2,32 +2,38 @@
 title: Homepage
 subtitle: Homepage
 type: informational
-lastUpdateDate: 2024-03-09
+lastUpdateDate: 2026-11-01
 hideTitle: true
 seo:
-  title: KreativeTab — Branding, Web Design and Product Design
-  description: Creative studio for logos and identity, social and campaign posters, motion graphics, websites and app UI/UX design.
+  title: KreativeTab — Brand kits, websites and apps in Derby
+  description: Derby-based studio for brand kits, fast Astro websites, Next.js web apps and React Native mobile apps. Fixed-price packages and quick turnaround.
   author: KreativeTab
 ---
 
 {% Hero
-   title="Branding, websites and product design that make you stand out."
-   subtitle="KreativeTab is a creative studio for brands, websites and apps."
-   buttons=[{title: "Start a project", href: "/contact", style: "button", icon: "iconamoon:arrow-top-right-1-thin"}, {title: "View our work", href: "/works", style: "buttonLight"}] /%}
+   title="Brand, website or app. Live fast, fixed price."
+   subtitle="KreativeTab is a Derby-based studio. Meet us in person, see the price on the page and launch in days, not months."
+   buttons=[{title: "Start a project", href: "/contact", style: "button", icon: "iconamoon:arrow-top-right-1-thin"}, {title: "See prices", href: "/pricing", style: "buttonLight"}] /%}
 
 {% Container %}
 
 {% Services
-   title="Three services, done properly."
-   services=[{title: "Branding", description: "Logos and identity, social media and campaign posters, and animated motion graphics videos.", icon: "/src/assets/pages/homepage/marketing-service.png"}, {title: "Web Design", description: "Websites, designed and built. Fast, responsive and easy to update.", icon: "/src/assets/pages/homepage/socialmedia-service.png"}, {title: "Product Design", description: "App and product UI/UX, from product flows to polished screens.", icon: "/src/assets/pages/homepage/paidmedia-service.png"}] /%}
+   title="Four services, fixed prices."
+   services=[{title: "Brand kits", description: "Logo, colours, fonts and a brand sheet or guidelines, ready to use everywhere.", icon: "/src/assets/pages/homepage/brandkit-service.png", price: "From £395"}, {title: "Websites", description: "Fast Astro websites with copywriting, Google Business Profile set-up and an easy CMS included.", icon: "/src/assets/pages/homepage/website-service.png", price: "From £295"}, {title: "Web apps", description: "Booking tools, quote calculators, dashboards and MVPs built in Next.js and React.", icon: "/src/assets/pages/homepage/webapp-service.png", price: "From £1,495"}, {title: "Mobile apps", description: "One app for iPhone and Android, built in React Native (Expo) and submitted to the stores.", icon: "/src/assets/pages/homepage/mobileapp-service.png", price: "From £3,995"}] /%}
+
+{% WhyUs
+   eyebrow="Why KreativeTab"
+   title="A local studio that moves fast."
+   items=[{title: "Local to Derby", description: "Meet in person, with one point of contact from first chat to launch."}, {title: "Fast turnaround", description: "One-page sites in 5 working days and 5-page sites in 7 to 10."}, {title: "All-in websites", description: "Copywriting, Google Business Profile set-up and an easy CMS are included."}, {title: "You own it", description: "Your code, your content, your accounts. No lock-in and no minimum term on care plans."}]
+   priceLabel="Websites from"
+   price="£295"
+   priceNote="Fixed prices for every package, from one-page sites to mobile apps. 50% to start, 50% on launch."
+   buttonLabel="See packages and prices"
+   buttonLink="/pricing" /%}
 
 {% RecentWork
    title="Recent Works"
    buttons=[{title: "View all work", href: "/works", style: "button", icon: "iconamoon:arrow-top-right-1-thin"}] /%}
-
-{% Testimonial
-   testimonial="Clear thinking, sharp creative and a digital experience made to perform."
-   name="The KreativeTab standard" /%}
 
 {% BlogLatest title="From Blog" /%}
 

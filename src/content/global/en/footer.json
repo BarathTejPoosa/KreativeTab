@@ -7,19 +7,27 @@
 			"url": "/contact"
 		}
 	],
-	"tagline": "Creative studio for branding, web design and product design.",
+	"tagline": "Derby-based studio for brand kits, websites, web apps and mobile apps.",
 	"services": [
 		{
-			"title": "Branding",
-			"link": "/services"
+			"title": "Brand kits",
+			"link": "/services#brand-kits"
 		},
 		{
-			"title": "Web Design",
-			"link": "/services"
+			"title": "Websites",
+			"link": "/services#websites"
 		},
 		{
-			"title": "Product Design",
-			"link": "/services"
+			"title": "Web apps",
+			"link": "/services#web-apps"
+		},
+		{
+			"title": "Mobile apps",
+			"link": "/services#mobile-apps"
+		},
+		{
+			"title": "Pricing",
+			"link": "/pricing"
 		}
 	]
 }

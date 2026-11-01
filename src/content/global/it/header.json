@@ -16,6 +16,10 @@
 			"link": "/services"
 		},
 		{
+			"title": "Prezzi",
+			"link": "/pricing"
+		},
+		{
 			"title": "Portfolio",
 			"link": "/works"
 		},

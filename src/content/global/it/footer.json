@@ -1,25 +1,33 @@
 {
 	"title": "Hai Qualche Domanda?<br/> Non esitare a contattarci!",
-	"copyright": "© 2024 La tua azienda",
+	"copyright": "© 2026 KreativeTab",
 	"buttons": [
 		{
 			"text": "Contattaci",
 			"url": "/contact"
 		}
 	],
-	"tagline": "Studio creativo per branding, web design e product design.",
+	"tagline": "Studio con base a Derby per brand kit, siti web, web app e app mobile.",
 	"services": [
 		{
-			"title": "Branding",
-			"link": "/services"
+			"title": "Brand kit",
+			"link": "/services#brand-kit"
 		},
 		{
-			"title": "Web Design",
-			"link": "/services"
+			"title": "Siti web",
+			"link": "/services#siti-web"
 		},
 		{
-			"title": "Product Design",
-			"link": "/services"
+			"title": "Web app",
+			"link": "/services#web-app"
+		},
+		{
+			"title": "App mobile",
+			"link": "/services#app-mobile"
+		},
+		{
+			"title": "Prezzi",
+			"link": "/pricing"
 		}
 	]
 }

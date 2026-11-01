@@ -16,8 +16,8 @@ const l = labels[currentLocale] ?? labels.en;
 const allWorks = await getSortedWorks(currentLocale);
 
 // Filter chips come from the categories actually used in the CMS
-const categoryOrder = ["Branding", "Social & Campaigns", "Motion", "Web", "Product"];
-const categories = [...new Set(allWorks.map((work) => work.data.category ?? "Branding"))].sort(
+const categoryOrder = ["Brand kits", "Websites", "Web apps", "Mobile apps"];
+const categories = [...new Set(allWorks.map((work) => work.data.category ?? "Websites"))].sort(
 	(a, b) => (categoryOrder.indexOf(a) + 1 || 99) - (categoryOrder.indexOf(b) + 1 || 99),
 );
 
