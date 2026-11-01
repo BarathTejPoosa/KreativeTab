@@ -25,6 +25,8 @@ export function organizationJsonLd(description?: string) {
 		...(description ? { description } : {}),
 		...(contacts.mail ? { email: contacts.mail } : {}),
 		...(contacts.phone ? { telephone: contacts.phone } : {}),
+		address: { "@type": "PostalAddress", addressLocality: "Derby", addressCountry: "GB" },
+		areaServed: "Derby, UK",
 		...(sameAs.length ? { sameAs } : {}),
 	};
 }

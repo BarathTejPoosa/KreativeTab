@@ -3,6 +3,7 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import BlogPreview from "@/components/sections/BlogPreview.astro";
 
 const currentLocale = Astro.currentLocale;
+const emptyText = currentLocale === "it" ? "Nessun articolo per ora. Torna presto." : "No posts yet. Check back soon.";
 
 const posts = await getCollection("posts");
 
@@ -25,5 +26,6 @@ const allPosts = posts
 <div
 	class="gap-x-[1.88rem] text-sm font-medium auto-cols-fr grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-rows-[auto] gap-y-10 grid pb-40"
 >
+	{allPosts.length === 0 && <p class="text-base text-neutral-500">{emptyText}</p>}
 	{allPosts.map((post) => <BlogPreview {post} />)}
 </div>

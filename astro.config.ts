@@ -36,7 +36,25 @@ function noindexPaths(): Set<string> {
 	}
 	return paths;
 }
+/** Locales with at least one published (not hidden) post; the News page is left out of the sitemap for the rest. */
+function localesWithPosts(): Set<string> {
+	const found = new Set<string>();
+	const dir = join("src", "content", "posts");
+	if (!existsSync(dir)) return found;
+	for (const locale of readdirSync(dir)) {
+		const localeDir = join(dir, locale);
+		const published = readdirSync(localeDir)
+			.filter((f) => f.endsWith(".mdoc"))
+			.some((f) => !/^\s*hidden:\s*true\s*$/m.test(readFileSync(join(localeDir, f), "utf8").split("---")[1] ?? ""));
+		if (published) found.add(locale);
+	}
+	return found;
+}
 const hiddenFromSearch = noindexPaths();
+const postLocales = localesWithPosts();
+for (const locale of locales) {
+	if (!postLocales.has(locale)) hiddenFromSearch.add(locale === defaultLocale ? "/news/" : `/${locale}/news/`);
+}
 
 // https://astro.build/config
 export default defineConfig({

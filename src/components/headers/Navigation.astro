@@ -1,9 +1,15 @@
 ---
 import { getLocalizedSettings, translatePath } from "@/lib/localization-helpers";
 import { defaultLocale } from "site";
+import { hasPublishedPosts, isNewsLink } from "@/lib/posts";
 
 const currentLocale = Astro.currentLocale ?? defaultLocale;
 const { header } = getLocalizedSettings(currentLocale);
+const showNews = await hasPublishedPosts(currentLocale);
+const pages = header.pages.filter((page) => showNews || !isNewsLink(page.link));
+const t = currentLocale === "it"
+	? { cta: "Inizia un progetto", menu: "Apri il menu" }
+	: { cta: "Start a project", menu: "Open navigation" };
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 function isCurrentPage(path: string) {
@@ -24,7 +30,7 @@ function isCurrentPage(path: string) {
 
 		<nav class="ml-auto hidden h-full items-center lg:flex" aria-label="Primary navigation">
 			<ul class="flex h-full items-center gap-8">
-				{header.pages.map((page) => (
+				{pages.map((page) => (
 					<li class="h-full">
 						<a
 							href={translatePath(currentLocale, page.link)}
@@ -46,20 +52,20 @@ function isCurrentPage(path: string) {
 				href={translatePath(currentLocale, "/contact")}
 				class="inline-flex min-h-10 items-center gap-2 bg-brand-flare px-4 text-sm font-semibold text-brand-ink transition-colors hover:bg-brand-ink hover:text-white"
 			>
-				Start a project <span aria-hidden="true">↗</span>
+				{t.cta} <span aria-hidden="true">↗</span>
 			</a>
 		</nav>
 
 		<details class="group ml-auto lg:hidden">
 			<summary
 				class="flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-end [&::-webkit-details-marker]:hidden"
-				aria-label="Open navigation"
+				aria-label={t.menu}
 			>
 				<span class="menu-lines relative h-4 w-6"></span>
 			</summary>
 			<nav class="absolute inset-x-0 top-16 border-b border-brand-ink/10 bg-brand-paper px-5 py-5" aria-label="Mobile navigation">
 				<ul class="divide-y divide-brand-ink/10">
-					{header.pages.map((page) => (
+					{pages.map((page) => (
 						<li>
 							<a
 								href={translatePath(currentLocale, page.link)}
@@ -75,7 +81,7 @@ function isCurrentPage(path: string) {
 					))}
 				</ul>
 				<a href={translatePath(currentLocale, "/contact")} class="mt-5 flex min-h-12 items-center justify-center bg-brand-flare px-5 font-semibold text-brand-ink">
-					Start a project
+					{t.cta}
 				</a>
 			</nav>
 		</details>

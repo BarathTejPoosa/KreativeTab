@@ -359,7 +359,7 @@ const pageComponents = {
 								subtitle: fields.text({ label: "Intro", multiline: true }),
 								notice: fields.text({
 									label: "Notice banner (optional)",
-									description: "Shown above the packages, e.g. a note that prices are a draft. Leave empty to hide.",
+									description: "Optional banner shown above the packages. Leave empty to hide.",
 									multiline: true,
 								}),
 								groups: fields.array(
@@ -371,6 +371,7 @@ const pageComponents = {
 												{ label: "Brand kits", value: "brand-kits" },
 												{ label: "Web apps", value: "web-apps" },
 												{ label: "Mobile apps", value: "mobile-apps" },
+												{ label: "Launch bundle", value: "bundles" },
 												{ label: "Care plans", value: "care-plans" },
 											],
 											defaultValue: "websites",
@@ -390,6 +391,7 @@ const pageComponents = {
 												{ label: "Brand kits", value: "brand-kits" },
 												{ label: "Web apps", value: "web-apps" },
 												{ label: "Mobile apps", value: "mobile-apps" },
+												{ label: "Launch bundle", value: "bundles" },
 												{ label: "Care plans", value: "care-plans" },
 											],
 											defaultValue: "websites",
@@ -853,8 +855,8 @@ const worksCollection = (locale: LocaleKey, prefix: string) =>
 			}),
 			hidden: fields.checkbox({ label: "Hidden (draft)", defaultValue: false }),
 			example: fields.checkbox({
-				label: "Example / placeholder project",
-				description: "Shows an “Example” badge. Untick (or delete the project) once you add real work.",
+				label: "Concept project (not client work)",
+				description: "Shows a “Concept” badge. Untick for real client work.",
 				defaultValue: false,
 			}),
 			seo: seoFields("project"),
