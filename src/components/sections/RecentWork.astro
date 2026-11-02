@@ -22,7 +22,7 @@ const allWorkHref = translatePath(currentLocale, allWorkButton?.href ?? "/works"
 
 const tunnelWorks = recentWorks.map((work) => ({
 	title: work.data.title,
-	tags: `${work.data.example ? "Showcase · " : ""}${[work.data.category, ...work.data.alsoIn].filter((c): c is string => Boolean(c)).map((c) => categoryLabel(c, currentLocale)).join(" + ") || work.data.tags.join(", ")}`,
+	tags: `${[work.data.category, ...work.data.alsoIn].filter((c): c is string => Boolean(c)).map((c) => categoryLabel(c, currentLocale)).join(" + ") || work.data.tags.join(", ")}`,
 	href: translatePath(currentLocale, `/work${unlocalizedUrl(`/${work.slug}`)}`),
 }));
 
