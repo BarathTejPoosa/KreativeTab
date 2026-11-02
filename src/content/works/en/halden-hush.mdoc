@@ -1,0 +1,59 @@
+---
+title: "Halden Hush"
+client: "Type: 3D product launch website"
+category: Immersive websites
+alsoIn:
+  - Websites
+tags:
+  - "3D scroll"
+  - "Product launch"
+  - "Three.js"
+  - "Astro"
+year: 2026
+cover: '@/assets/works/halden-hush/cover.webp'
+coverAlt: "Halden Hush home page: a dark hero with the headline Silence, shaped. next to a real-time 3D model of over-ear headphones with champagne aluminium yokes"
+intro: "Showcase build: a scroll-driven 3D launch page for a pair of wireless headphones. The model turns, takes itself apart and changes finish as you scroll."
+blocks:
+  - discriminant: image
+    value:
+      image: '@/assets/works/halden-hush/01-scroll-sequence.webp'
+      alt: "Six frames of the Halden Hush page on desktop: the 3D headphones rotate, explode into their parts, show the cushions, balance point and finishes as the page scrolls"
+      caption: "Desktop scroll story: the headphones rotate, open up and change finish as you scroll"
+  - discriminant: image
+    value:
+      image: '@/assets/works/halden-hush/02-tablet-mobile.webp'
+      alt: "Halden Hush on tablet and phone: the 3D headphones, feature cards and finish picker in narrower layouts"
+      caption: "The same story on tablet and phone"
+  - discriminant: image
+    value:
+      image: '@/assets/works/halden-hush/03-specs-build.webp'
+      alt: "The lower half of the Halden Hush page: a finish picker, a specifications table and a How this page is built section with three cards"
+      caption: "Finish picker, specifications and how the page is built"
+  - discriminant: imagePair
+    value:
+      left: '@/assets/works/halden-hush/04-mobile.webp'
+      leftAlt: "Halden Hush hero on a phone, with the headline above the 3D headphones"
+      right: '@/assets/works/halden-hush/04-tablet.webp'
+      rightAlt: "Halden Hush hero on a tablet"
+      caption: "First screen on phone and tablet"
+link: https://kt-demo-halden.vercel.app/
+caseStudy:
+  problem: "A premium product launch needs a page that feels as considered as the product. Flat photos and a spec list don't show how something is made, and heavy 3D sites are often slow on phones and invisible to Google."
+  built: "A launch page where a real-time 3D model of the headphones is built in code and lit with physically based materials. Scrolling drives the camera, an exploded view of the parts and the finish colours. Phones get light pre-rendered stills first and only switch to WebGL when you interact; reduced-motion settings keep the still version. Every word is real HTML with structured data, so the page can still be found in search."
+  stack:
+    - "Astro"
+    - "Three.js (WebGL)"
+    - "GSAP ScrollTrigger"
+    - "Lenis smooth scrolling"
+    - "Vercel"
+lighthouse:
+  performance: 100
+  accessibility: 100
+  bestPractices: 100
+  seo: 100
+  testedUrl: https://kt-demo-halden.vercel.app/
+  testedOn: 2026-11-02
+featured: true
+hidden: false
+example: true
+---

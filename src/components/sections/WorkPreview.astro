@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { translatePath, unlocalizedUrl } from "@/lib/localization-helpers";
 import { defaultLocale } from "site";
+import { categoryLabel } from "@/lib/work-categories";
 
 interface Props {
 	work: CollectionEntry<"works">;
@@ -42,7 +43,7 @@ const categories = [category ?? "Websites", ...alsoIn.filter((c) => c !== (categ
 		<div class="tile-overlay absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/25 to-transparent p-5 text-white transition-opacity duration-300">
 			<Heading class="m-0 text-lg font-semibold leading-snug !text-white">{title}</Heading>
 			<p class="mt-1 text-sm text-white/80">
-				{categories.join(" + ")}{client && !example ? ` · ${client}` : ""}
+				{categories.map((c) => categoryLabel(c, currentLocale)).join(" + ")}{client && !example ? ` · ${client}` : ""}
 			</p>
 		</div>
 	</a>

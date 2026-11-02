@@ -9,6 +9,7 @@ import { translatePath, unlocalizedUrl } from "@/lib/localization-helpers";
 import { absoluteUrl, breadcrumbJsonLd, organizationId, withTrailingSlash } from "@/lib/seo";
 import { Icon } from "astro-icon/components";
 import { defaultLocale } from "site";
+import { categoryLabel } from "@/lib/work-categories";
 import BaseLayout from "./BaseLayout.astro";
 
 type Props = {
@@ -161,7 +162,7 @@ const description =
 	`${work.title}: ${work.category ?? "design"} project by KreativeTab${work.tags.length ? ` (${work.tags.slice(0, 3).join(", ")})` : ""}.`;
 
 const seo: PageSeo = {
-	title: work.seo?.title ?? `${work.title}${work.category ? ` · ${work.category}` : ""} | KreativeTab`,
+	title: work.seo?.title ?? `${work.title}${work.category ? ` · ${categoryLabel(work.category, locale)}` : ""} | KreativeTab`,
 	description,
 	noindex: work.seo?.noindex,
 	image: ogImage.src,
@@ -196,7 +197,7 @@ const seo: PageSeo = {
 		]),
 	],
 };
-const meta = [work.client, [work.category, ...work.alsoIn].filter(Boolean).join(" + "), work.year].filter(Boolean);
+const meta = [work.client, [work.category, ...work.alsoIn].filter((c): c is string => Boolean(c)).map((c) => categoryLabel(c, locale)).join(" + "), work.year].filter(Boolean);
 const imgWidths = [800, 1400, 2000];
 ---
 

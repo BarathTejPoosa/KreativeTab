@@ -4,6 +4,7 @@ import { getSortedWorks } from "@/lib/collection-helpers";
 import { translatePath, unlocalizedUrl } from "@/lib/localization-helpers";
 import { absoluteUrl, jsonLdString, withTrailingSlash } from "@/lib/seo";
 import { defaultLocale } from "site.config";
+import { categoryLabel, workCategoryOrder } from "@/lib/work-categories";
 
 const currentLocale = Astro.currentLocale ?? defaultLocale;
 const labels: Record<string, { all: string; filter: string; empty: string }> = {
@@ -16,7 +17,7 @@ const l = labels[currentLocale] ?? labels.en;
 const allWorks = await getSortedWorks(currentLocale);
 
 // Filter chips come from the categories actually used in the CMS
-const categoryOrder = ["Brand kits", "Websites", "Web apps", "Mobile apps"];
+const categoryOrder = workCategoryOrder;
 const categories = [...new Set(allWorks.flatMap((work) => [work.data.category ?? "Websites", ...work.data.alsoIn]))].sort(
 	(a, b) => (categoryOrder.indexOf(a) + 1 || 99) - (categoryOrder.indexOf(b) + 1 || 99),
 );
@@ -44,7 +45,7 @@ const itemList = {
 				</button>
 				{categories.map((category) => (
 					<button type="button" class="chip" data-filter={category} aria-pressed="false">
-						{category}
+						{categoryLabel(category, currentLocale)}
 					</button>
 				))}
 			</div>

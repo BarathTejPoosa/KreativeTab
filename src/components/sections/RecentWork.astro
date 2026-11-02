@@ -4,6 +4,7 @@ import type { ButtonProps } from "@/components/primitives/Button.astro";
 import RecentWorksTunnel from "@/components/sections/RecentWorksTunnel";
 import { translatePath, unlocalizedUrl } from "@/lib/localization-helpers";
 import { defaultLocale } from "site";
+import { categoryLabel } from "@/lib/work-categories";
 
 const currentLocale = Astro.currentLocale ?? defaultLocale;
 // Featured portfolio items first, then newest
@@ -21,7 +22,7 @@ const allWorkHref = translatePath(currentLocale, allWorkButton?.href ?? "/works"
 
 const tunnelWorks = recentWorks.map((work) => ({
 	title: work.data.title,
-	tags: `${work.data.example ? "Showcase · " : ""}${[work.data.category, ...work.data.alsoIn].filter(Boolean).join(" + ") || work.data.tags.join(", ")}`,
+	tags: `${work.data.example ? "Showcase · " : ""}${[work.data.category, ...work.data.alsoIn].filter((c): c is string => Boolean(c)).map((c) => categoryLabel(c, currentLocale)).join(" + ") || work.data.tags.join(", ")}`,
 	href: translatePath(currentLocale, `/work${unlocalizedUrl(`/${work.slug}`)}`),
 }));
 

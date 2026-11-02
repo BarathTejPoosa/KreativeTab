@@ -1,0 +1,59 @@
+---
+title: "Halden Hush"
+client: "Tipo: sito di lancio prodotto in 3D"
+category: Immersive websites
+alsoIn:
+  - Websites
+tags:
+  - "Scroll 3D"
+  - "Lancio prodotto"
+  - "Three.js"
+  - "Astro"
+year: 2026
+cover: '@/assets/works/halden-hush/cover.webp'
+coverAlt: "Home page di Halden Hush: hero scuro con il titolo Silence, shaped. accanto a un modello 3D in tempo reale di cuffie over-ear con archetti in alluminio champagne"
+intro: "Progetto showcase: una pagina di lancio in 3D guidata dallo scroll per un paio di cuffie wireless. Il modello ruota, si scompone e cambia finitura mentre scorri."
+blocks:
+  - discriminant: image
+    value:
+      image: '@/assets/works/halden-hush/01-scroll-sequence.webp'
+      alt: "Sei fotogrammi della pagina Halden Hush su desktop: le cuffie 3D ruotano, si scompongono nei loro pezzi, mostrano i cuscinetti, il bilanciamento e le finiture durante lo scroll"
+      caption: "Racconto a scroll su desktop: le cuffie ruotano, si aprono e cambiano finitura mentre scorri"
+  - discriminant: image
+    value:
+      image: '@/assets/works/halden-hush/02-tablet-mobile.webp'
+      alt: "Halden Hush su tablet e telefono: le cuffie 3D, le schede delle funzioni e il selettore di finitura in layout più stretti"
+      caption: "La stessa storia su tablet e telefono"
+  - discriminant: image
+    value:
+      image: '@/assets/works/halden-hush/03-specs-build.webp'
+      alt: "La parte bassa della pagina Halden Hush: selettore di finitura, tabella delle specifiche e la sezione How this page is built con tre schede"
+      caption: "Selettore di finitura, specifiche e come è costruita la pagina"
+  - discriminant: imagePair
+    value:
+      left: '@/assets/works/halden-hush/04-mobile.webp'
+      leftAlt: "L'hero di Halden Hush su telefono, con il titolo sopra le cuffie 3D"
+      right: '@/assets/works/halden-hush/04-tablet.webp'
+      rightAlt: "L'hero di Halden Hush su tablet"
+      caption: "Prima schermata su telefono e tablet"
+link: https://kt-demo-halden.vercel.app/
+caseStudy:
+  problem: "Il lancio di un prodotto premium ha bisogno di una pagina curata quanto il prodotto. Foto piatte e un elenco di specifiche non mostrano come è fatto un oggetto, e i siti 3D pesanti sono spesso lenti sui telefoni e invisibili a Google."
+  built: "Una pagina di lancio in cui un modello 3D in tempo reale delle cuffie è costruito in codice e illuminato con materiali fisicamente realistici. Lo scroll guida la telecamera, una vista esplosa dei componenti e i colori delle finiture. I telefoni ricevono prima immagini statiche leggere e passano a WebGL solo quando interagisci; con il movimento ridotto attivo resta la versione statica. Ogni parola è vero HTML con dati strutturati, così la pagina resta trovabile nella ricerca."
+  stack:
+    - "Astro"
+    - "Three.js (WebGL)"
+    - "GSAP ScrollTrigger"
+    - "Lenis smooth scrolling"
+    - "Vercel"
+lighthouse:
+  performance: 100
+  accessibility: 100
+  bestPractices: 100
+  seo: 100
+  testedUrl: https://kt-demo-halden.vercel.app/
+  testedOn: 2026-11-02
+featured: true
+hidden: false
+example: true
+---

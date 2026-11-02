@@ -729,6 +729,7 @@ const pagesCollection = (locale: LocaleKey, prefix: string) =>
 const workCategories = [
 	"Brand kits",
 	"Websites",
+	"Immersive websites",
 	"Web apps",
 	"Mobile apps",
 ] as const;

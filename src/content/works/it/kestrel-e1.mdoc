@@ -1,0 +1,60 @@
+---
+title: "Kestrel E1"
+client: "Tipo: sito prodotto con video guidato dallo scroll"
+category: Immersive websites
+alsoIn:
+  - Websites
+tags:
+  - "Video a scroll"
+  - "Canvas frame-scrub"
+  - "Lancio prodotto"
+  - "Astro"
+year: 2026
+cover: '@/assets/works/kestrel-e1/cover.webp'
+coverAlt: "Home page di Kestrel E1: foto in studio di una bici elettrica nero opaco su sfondo scuro con il titolo The city, shortened."
+intro: "Progetto showcase: una pagina prodotto per una e-bike urbana in cui un filmato in studio va avanti e indietro mentre scorri, così giri intorno alla bici con il pollice."
+blocks:
+  - discriminant: image
+    value:
+      image: '@/assets/works/kestrel-e1/01-scroll-sequence.webp'
+      alt: "Otto fotogrammi della pagina Kestrel E1 su desktop: la bici ruota tra vista laterale, frontale e di tre quarti mentre compaiono i pannelli delle funzioni e la sezione dei numeri"
+      caption: "Racconto a scroll su desktop: il filmato segue lo scroll e i pannelli lo accompagnano"
+  - discriminant: image
+    value:
+      image: '@/assets/works/kestrel-e1/02-gallery-pin.webp'
+      alt: "Every angle considered: una galleria orizzontale fissata con foto della bici che scorrono di lato durante lo scroll"
+      caption: "Galleria fissata: lo scroll verticale fa scorrere le foto di lato"
+  - discriminant: image
+    value:
+      image: '@/assets/works/kestrel-e1/03-mobile-sequence.webp'
+      alt: "Dieci fotogrammi della pagina Kestrel E1 su telefono, dall'hero ai numeri, alla galleria, alle specifiche e a come è costruita"
+      caption: "Su telefono: una sequenza di fotogrammi più leggera e ritagliata"
+  - discriminant: imagePair
+    value:
+      left: '@/assets/works/kestrel-e1/04-mobile.webp'
+      leftAlt: "L'hero di Kestrel E1 su telefono"
+      right: '@/assets/works/kestrel-e1/04-tablet.webp'
+      rightAlt: "L'hero di Kestrel E1 su tablet"
+      caption: "Prima schermata su telefono e tablet"
+link: https://kt-demo-kestrel.vercel.app/
+caseStudy:
+  problem: "Il video vende i prodotti, ma una clip in autoplay si supera facilmente con lo scroll e un file video pesante rallenta la pagina, soprattutto sui telefoni."
+  built: "Una pagina prodotto in cui un filmato in studio di otto secondi è diviso in fotogrammi WebP e disegnato su un canvas mentre scorri, così è il visitatore a controllare il filmato. I telefoni ricevono una sequenza più piccola e ritagliata di 72 fotogrammi, caricata dopo che la pagina è pronta, prima quelli a bassa definizione. Una galleria fissata, una sezione di numeri e una tabella delle specifiche portano i dettagli; con il movimento ridotto attivo il filmato diventa un'immagine ferma e la pagina si legge dall'alto in basso."
+  stack:
+    - "Astro"
+    - "Canvas frame-scrub (fotogrammi WebP)"
+    - "ffmpeg"
+    - "GSAP ScrollTrigger"
+    - "Lenis smooth scrolling"
+    - "Vercel"
+lighthouse:
+  performance: 100
+  accessibility: 100
+  bestPractices: 100
+  seo: 100
+  testedUrl: https://kt-demo-kestrel.vercel.app/
+  testedOn: 2026-11-02
+featured: false
+hidden: false
+example: true
+---

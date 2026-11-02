@@ -1,0 +1,60 @@
+---
+title: "Kestrel E1"
+client: "Type: Scroll-video product website"
+category: Immersive websites
+alsoIn:
+  - Websites
+tags:
+  - "Scroll video"
+  - "Canvas frame-scrub"
+  - "Product launch"
+  - "Astro"
+year: 2026
+cover: '@/assets/works/kestrel-e1/cover.webp'
+coverAlt: "Kestrel E1 home page: a dark studio shot of a matte black electric bike with the headline The city, shortened."
+intro: "Showcase build: a product page for an urban e-bike where a studio film plays forwards and backwards as you scroll, so you walk around the bike with your thumb."
+blocks:
+  - discriminant: image
+    value:
+      image: '@/assets/works/kestrel-e1/01-scroll-sequence.webp'
+      alt: "Eight frames of the Kestrel E1 page on desktop: the bike turns through profile, head-on and three-quarter views as feature panels and a numbers section appear"
+      caption: "Desktop scroll story: the film moves with your scroll and the feature panels follow"
+  - discriminant: image
+    value:
+      image: '@/assets/works/kestrel-e1/02-gallery-pin.webp'
+      alt: "Every angle considered: a pinned horizontal gallery of bike photos moving sideways as the page scrolls"
+      caption: "Pinned gallery: vertical scrolling moves the photos sideways"
+  - discriminant: image
+    value:
+      image: '@/assets/works/kestrel-e1/03-mobile-sequence.webp'
+      alt: "Ten frames of the Kestrel E1 page on a phone, from the hero through the numbers, gallery, specifications and how it's built"
+      caption: "On a phone: a lighter, cropped frame sequence"
+  - discriminant: imagePair
+    value:
+      left: '@/assets/works/kestrel-e1/04-mobile.webp'
+      leftAlt: "Kestrel E1 hero on a phone"
+      right: '@/assets/works/kestrel-e1/04-tablet.webp'
+      rightAlt: "Kestrel E1 hero on a tablet"
+      caption: "First screen on phone and tablet"
+link: https://kt-demo-kestrel.vercel.app/
+caseStudy:
+  problem: "Video sells products, but an autoplay clip is easy to scroll past and a large video file slows the page down, especially on phones."
+  built: "A product page where an eight-second studio film is cut into WebP frames and painted to a canvas as you scroll, so the visitor controls the film. Phones get a smaller, cropped sequence of 72 frames that loads after the page is ready, coarse frames first. A pinned gallery, a numbers section and a specification table carry the detail, and with reduced motion switched on the film becomes a calm still and the page reads top to bottom."
+  stack:
+    - "Astro"
+    - "Canvas frame-scrub (WebP frames)"
+    - "ffmpeg"
+    - "GSAP ScrollTrigger"
+    - "Lenis smooth scrolling"
+    - "Vercel"
+lighthouse:
+  performance: 100
+  accessibility: 100
+  bestPractices: 100
+  seo: 100
+  testedUrl: https://kt-demo-kestrel.vercel.app/
+  testedOn: 2026-11-02
+featured: false
+hidden: false
+example: true
+---
