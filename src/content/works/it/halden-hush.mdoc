@@ -11,41 +11,41 @@ tags:
   - "Astro"
 year: 2026
 cover: '@/assets/works/halden-hush/cover.webp'
-coverAlt: "Home page di Halden Hush: hero scuro con il titolo Silence, shaped. accanto a un modello 3D in tempo reale di cuffie over-ear con archetti in alluminio champagne"
-intro: "Progetto showcase: una pagina di lancio in 3D guidata dallo scroll per un paio di cuffie wireless. Il modello ruota, si scompone e cambia finitura mentre scorri."
+coverAlt: "Home page di Halden Hush: hero chiaro color carta con il titolo Quiet has a shape. accanto a un modello 3D in tempo reale di cuffie over-ear nere con cursori in alluminio champagne"
+intro: "Progetto showcase: una pagina di lancio in 3D guidata dallo scroll per un paio di cuffie wireless. Un modello realistico delle cuffie, in luce da studio, ruota mentre scorri, e sottili anelli sul modello aprono brevi note su ogni dettaglio."
 blocks:
   - discriminant: image
     value:
       image: '@/assets/works/halden-hush/01-scroll-sequence.webp'
-      alt: "Sei fotogrammi della pagina Halden Hush su desktop: le cuffie 3D ruotano, si scompongono nei loro pezzi, mostrano i cuscinetti, il bilanciamento e le finiture durante lo scroll"
-      caption: "Racconto a scroll su desktop: le cuffie ruotano, si aprono e cambiano finitura mentre scorri"
+      alt: "Sei fotogrammi della pagina Halden Hush su desktop: l'hero, poi i capitoli Silence, Materials e Power, con le cuffie 3D che ruotano e una scheda di dettaglio aperta accanto a un anello"
+      caption: "Racconto a scroll su desktop: le cuffie ruotano verso ogni capitolo e gli anelli aprono una scheda di dettaglio"
   - discriminant: image
     value:
       image: '@/assets/works/halden-hush/02-tablet-mobile.webp'
-      alt: "Halden Hush su tablet e telefono: le cuffie 3D, le schede delle funzioni e il selettore di finitura in layout più stretti"
-      caption: "La stessa storia su tablet e telefono"
+      alt: "Halden Hush su telefono e tablet: quattro schermate da telefono, tre con il pannello di dettaglio aperto dal basso dopo aver toccato un anello, e due schermate da tablet dei capitoli Silence e Power"
+      caption: "Sui telefoni, toccando un anello si apre un pannello dal basso"
   - discriminant: image
     value:
       image: '@/assets/works/halden-hush/03-specs-build.webp'
-      alt: "La parte bassa della pagina Halden Hush: selettore di finitura, tabella delle specifiche e la sezione How this page is built con tre schede"
-      caption: "Selettore di finitura, specifiche e come è costruita la pagina"
+      alt: "La parte bassa della pagina Halden Hush: tabella delle specifiche su due colonne con il titolo The details., la sezione finale A product page that feels like the product. e il footer con i crediti del modello e dell'illuminazione"
+      caption: "Specifiche, sezione finale e crediti CC0"
   - discriminant: imagePair
     value:
       left: '@/assets/works/halden-hush/04-mobile.webp'
-      leftAlt: "L'hero di Halden Hush su telefono, con il titolo sopra le cuffie 3D"
+      leftAlt: "L'hero di Halden Hush su telefono, con le cuffie 3D sopra il titolo Quiet has a shape."
       right: '@/assets/works/halden-hush/04-tablet.webp'
       rightAlt: "L'hero di Halden Hush su tablet"
       caption: "Prima schermata su telefono e tablet"
 link: https://kt-demo-halden.vercel.app/
 caseStudy:
   problem: "Il lancio di un prodotto premium ha bisogno di una pagina curata quanto il prodotto. Foto piatte e un elenco di specifiche non mostrano come è fatto un oggetto, e i siti 3D pesanti sono spesso lenti sui telefoni e invisibili a Google."
-  built: "Una pagina di lancio in cui un modello 3D in tempo reale delle cuffie è costruito in codice e illuminato con materiali fisicamente realistici. Lo scroll guida la telecamera, una vista esplosa dei componenti e i colori delle finiture. I telefoni ricevono prima immagini statiche leggere e passano a WebGL solo quando interagisci; con il movimento ridotto attivo resta la versione statica. Ogni parola è vero HTML con dati strutturati, così la pagina resta trovabile nella ricerca."
+  built: "Una pagina di lancio calma, in tono chiaro color carta, composta in Hanken Grotesk, con testi brevi in stile editoriale che si aprono su 'Quiet has a shape.' Un modello realistico delle cuffie con licenza CC0 è illuminato con un HDRI da studio di Poly Haven e renderizzato in tempo reale con Three.js. Lo scroll porta il modello attraverso tre capitoli (Silence, Materials, Power) e sottili anelli sul modello aprono una breve scheda di dettaglio; sui telefoni la scheda sale dal basso come un pannello. Ogni parola è vero HTML, così la pagina resta trovabile nella ricerca."
   stack:
-    - "Astro"
-    - "Three.js (WebGL)"
+    - "Three.js"
     - "GSAP ScrollTrigger"
-    - "Lenis smooth scrolling"
-    - "Vercel"
+    - "Lenis"
+    - "CC0 model"
+    - "Poly Haven HDRI"
 lighthouse:
   performance: 100
   accessibility: 100

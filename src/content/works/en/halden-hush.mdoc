@@ -11,41 +11,41 @@ tags:
   - "Astro"
 year: 2026
 cover: '@/assets/works/halden-hush/cover.webp'
-coverAlt: "Halden Hush home page: a dark hero with the headline Silence, shaped. next to a real-time 3D model of over-ear headphones with champagne aluminium yokes"
-intro: "Showcase build: a scroll-driven 3D launch page for a pair of wireless headphones. The model turns, takes itself apart and changes finish as you scroll."
+coverAlt: "Halden Hush home page: a light paper-toned hero with the headline Quiet has a shape. beside a real-time 3D model of black over-ear headphones with champagne aluminium sliders"
+intro: "Showcase build: a scroll-driven 3D launch page for a pair of wireless headphones. A realistic headphone model under studio lighting turns as you scroll, and thin rings on the model open short notes on each detail."
 blocks:
   - discriminant: image
     value:
       image: '@/assets/works/halden-hush/01-scroll-sequence.webp'
-      alt: "Six frames of the Halden Hush page on desktop: the 3D headphones rotate, explode into their parts, show the cushions, balance point and finishes as the page scrolls"
-      caption: "Desktop scroll story: the headphones rotate, open up and change finish as you scroll"
+      alt: "Six frames of the Halden Hush page on desktop: the hero, then the Silence, Materials and Power chapters, with the 3D headphones turning and a detail card open beside a ring hotspot"
+      caption: "Desktop scroll story: the headphones turn to each chapter, and the rings open a detail card"
   - discriminant: image
     value:
       image: '@/assets/works/halden-hush/02-tablet-mobile.webp'
-      alt: "Halden Hush on tablet and phone: the 3D headphones, feature cards and finish picker in narrower layouts"
-      caption: "The same story on tablet and phone"
+      alt: "Halden Hush on phone and tablet: four phone screens, three of them with a detail bottom sheet open after tapping a ring, and two tablet screens from the Silence and Power chapters"
+      caption: "On phones, tapping a ring opens a bottom sheet"
   - discriminant: image
     value:
       image: '@/assets/works/halden-hush/03-specs-build.webp'
-      alt: "The lower half of the Halden Hush page: a finish picker, a specifications table and a How this page is built section with three cards"
-      caption: "Finish picker, specifications and how the page is built"
+      alt: "The lower part of the Halden Hush page: a two-column specifications table headed The details., then a closing section, A product page that feels like the product., and the footer with model and lighting credits"
+      caption: "Specifications, closing section and CC0 credits"
   - discriminant: imagePair
     value:
       left: '@/assets/works/halden-hush/04-mobile.webp'
-      leftAlt: "Halden Hush hero on a phone, with the headline above the 3D headphones"
+      leftAlt: "Halden Hush hero on a phone, with the 3D headphones above the headline Quiet has a shape."
       right: '@/assets/works/halden-hush/04-tablet.webp'
       rightAlt: "Halden Hush hero on a tablet"
       caption: "First screen on phone and tablet"
 link: https://kt-demo-halden.vercel.app/
 caseStudy:
   problem: "A premium product launch needs a page that feels as considered as the product. Flat photos and a spec list don't show how something is made, and heavy 3D sites are often slow on phones and invisible to Google."
-  built: "A launch page where a real-time 3D model of the headphones is built in code and lit with physically based materials. Scrolling drives the camera, an exploded view of the parts and the finish colours. Phones get light pre-rendered stills first and only switch to WebGL when you interact; reduced-motion settings keep the still version. Every word is real HTML with structured data, so the page can still be found in search."
+  built: "A calm, light paper-toned launch page set in Hanken Grotesk, with short editorial copy that opens on 'Quiet has a shape.' A realistic CC0 headphone model is lit with a Poly Haven studio HDRI and rendered live with Three.js. Scrolling moves the model through three chapters (Silence, Materials, Power), and thin rings on the model open a short detail card; on phones the card slides up as a bottom sheet. Every word is real HTML, so the page can still be found in search."
   stack:
-    - "Astro"
-    - "Three.js (WebGL)"
+    - "Three.js"
     - "GSAP ScrollTrigger"
-    - "Lenis smooth scrolling"
-    - "Vercel"
+    - "Lenis"
+    - "CC0 model"
+    - "Poly Haven HDRI"
 lighthouse:
   performance: 100
   accessibility: 100

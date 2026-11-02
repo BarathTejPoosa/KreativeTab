@@ -73,6 +73,7 @@ const availableShare = [
 	<Link
 		class="flex gap-3"
 		href=`mailto:${contacts.mail}`
+		aria-label={t.email}
 		size="md"
 		style="outline"
 	>
@@ -80,7 +81,7 @@ const availableShare = [
 		<span class="hidden sm:inline-block">{t.email}</span>
 	</Link>
 
-	<Link class="flex gap-3" href="#top" size="md" style="outline">
+	<Link class="flex gap-3" href="#top" aria-label={t.top} size="md" style="outline">
 		<Icon size={23} name="ic:sharp-vertical-align-top" />
 		<span class="hidden sm:inline-block">{t.top}</span>
 	</Link>
