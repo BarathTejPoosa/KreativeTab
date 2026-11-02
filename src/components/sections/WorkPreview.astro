@@ -15,10 +15,11 @@ const { work, eager = false, headingLevel = "h2" } = Astro.props;
 const Heading = headingLevel;
 const currentLocale = Astro.currentLocale ?? defaultLocale;
 const href = translatePath(currentLocale, `/work${unlocalizedUrl(`/${work.slug}`)}`);
-const { title, category, cover, coverAlt, example, client } = work.data;
+const { title, category, alsoIn, cover, coverAlt, example, client } = work.data;
+const categories = [category ?? "Websites", ...alsoIn.filter((c) => c !== (category ?? "Websites"))];
 ---
 
-<article class="work-tile" data-category={category ?? "Websites"}>
+<article class="work-tile" data-category={categories[0]} data-categories={categories.join("|")}>
 	<a
 		href={href}
 		class="group relative block aspect-[4/3] overflow-hidden rounded-xl bg-neutral-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
@@ -41,7 +42,7 @@ const { title, category, cover, coverAlt, example, client } = work.data;
 		<div class="tile-overlay absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/25 to-transparent p-5 text-white transition-opacity duration-300">
 			<Heading class="m-0 text-lg font-semibold leading-snug !text-white">{title}</Heading>
 			<p class="mt-1 text-sm text-white/80">
-				{category}{client && !example ? ` · ${client}` : ""}
+				{categories.join(" + ")}{client && !example ? ` · ${client}` : ""}
 			</p>
 		</div>
 	</a>

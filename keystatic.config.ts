@@ -771,6 +771,11 @@ const worksCollection = (locale: LocaleKey, prefix: string) =>
 				options: workCategories.map((value) => ({ label: value, value })),
 				defaultValue: "Websites",
 			}),
+			alsoIn: fields.multiselect({
+				label: "Also list under",
+				description: "Optional extra filter chips for projects that span more than one category.",
+				options: workCategories.map((value) => ({ label: value, value })),
+			}),
 			tags: fields.array(fields.text({ label: "Tag" }), {
 				label: "Tags",
 				description: "Services or tools, e.g. Logo, Astro, Next.js, Expo.",
@@ -847,7 +852,46 @@ const worksCollection = (locale: LocaleKey, prefix: string) =>
 					description: "The project itself: add images, image pairs, videos and short text, in order.",
 				},
 			),
-			link: fields.url({ label: "Live project link (optional)" }),
+			link: fields.url({
+				label: "Live project link (optional)",
+				description: "Shown as a big “View live demo” button (concept projects) or “View live” (client work). Opens in a new tab.",
+			}),
+			extraLinks: fields.array(
+				fields.object({
+					label: fields.text({ label: "Button text", validation: { isRequired: true } }),
+					url: fields.url({ label: "Link", validation: { isRequired: true } }),
+				}),
+				{
+					label: "Extra live links (optional)",
+					description: "Other pages worth opening, e.g. a dashboard or the brand guidelines.",
+					itemLabel: (props) => props.fields.label.value || "Link",
+				},
+			),
+			caseStudy: fields.object(
+				{
+					problem: fields.text({ label: "The problem", multiline: true }),
+					built: fields.text({ label: "What we built", multiline: true }),
+					stack: fields.array(fields.text({ label: "Tool" }), {
+						label: "Stack",
+						itemLabel: (props) => props.value,
+					}),
+				},
+				{ label: "Case study (optional)" },
+			),
+			lighthouse: fields.object(
+				{
+					performance: fields.integer({ label: "Performance", validation: { min: 0, max: 100 } }),
+					accessibility: fields.integer({ label: "Accessibility", validation: { min: 0, max: 100 } }),
+					bestPractices: fields.integer({ label: "Best practices", validation: { min: 0, max: 100 } }),
+					seo: fields.integer({ label: "SEO", validation: { min: 0, max: 100 } }),
+					testedUrl: fields.url({ label: "Page tested" }),
+					testedOn: fields.date({ label: "Date tested" }),
+				},
+				{
+					label: "Lighthouse scores (mobile, optional)",
+					description: "Only enter real scores from a Lighthouse run. Leave empty to hide.",
+				},
+			),
 			featured: fields.checkbox({
 				label: "Featured",
 				description: "Featured projects appear first on the Works page and the home page.",

@@ -21,7 +21,7 @@ const allWorkHref = translatePath(currentLocale, allWorkButton?.href ?? "/works"
 
 const tunnelWorks = recentWorks.map((work) => ({
 	title: work.data.title,
-	tags: work.data.category ?? work.data.tags.join(", "),
+	tags: `${work.data.example ? "Concept · " : ""}${[work.data.category, ...work.data.alsoIn].filter(Boolean).join(" + ") || work.data.tags.join(", ")}`,
 	href: translatePath(currentLocale, `/work${unlocalizedUrl(`/${work.slug}`)}`),
 }));
 

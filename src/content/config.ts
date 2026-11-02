@@ -86,6 +86,8 @@ const worksCollection = defineCollection({
 			title: z.string(),
 			client: optionalText,
 			category: optionalText,
+			/** Extra filter categories the project is also listed under */
+			alsoIn: z.array(z.string()).default([]),
 			tags: z.array(z.string()).default([]),
 			year: z.number().int(),
 			cover: image(),
@@ -93,6 +95,26 @@ const worksCollection = defineCollection({
 			intro: optionalText,
 			blocks: z.array(block).default([]),
 			link: optionalText,
+			extraLinks: z
+				.array(z.object({ label: z.string(), url: z.string() }))
+				.default([]),
+			caseStudy: z
+				.object({
+					problem: optionalText,
+					built: optionalText,
+					stack: z.array(z.string()).default([]),
+				})
+				.optional(),
+			lighthouse: z
+				.object({
+					performance: z.number().nullish(),
+					accessibility: z.number().nullish(),
+					bestPractices: z.number().nullish(),
+					seo: z.number().nullish(),
+					testedUrl: optionalText,
+					testedOn: z.coerce.date().nullish(),
+				})
+				.optional(),
 			featured: z.boolean().default(false),
 			hidden: z.optional(z.boolean()),
 			example: z.boolean().default(false),

@@ -17,7 +17,7 @@ const allWorks = await getSortedWorks(currentLocale);
 
 // Filter chips come from the categories actually used in the CMS
 const categoryOrder = ["Brand kits", "Websites", "Web apps", "Mobile apps"];
-const categories = [...new Set(allWorks.map((work) => work.data.category ?? "Websites"))].sort(
+const categories = [...new Set(allWorks.flatMap((work) => [work.data.category ?? "Websites", ...work.data.alsoIn]))].sort(
 	(a, b) => (categoryOrder.indexOf(a) + 1 || 99) - (categoryOrder.indexOf(b) + 1 || 99),
 );
 
@@ -103,7 +103,7 @@ const itemList = {
 				let shown = 0;
 				for (const chip of chips) chip.setAttribute("aria-pressed", String(chip.dataset.filter === filter));
 				for (const tile of tiles) {
-					const visible = filter === "all" || tile.dataset.category === filter;
+					const visible = filter === "all" || (tile.dataset.categories ?? tile.dataset.category ?? "").split("|").includes(filter);
 					tile.hidden = !visible;
 					if (visible) shown++;
 				}

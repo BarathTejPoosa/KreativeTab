@@ -87,7 +87,7 @@ const seeWork = it ? "Vedi i lavori" : "See work";
 const seePrices = it ? "Vedi pacchetti e prezzi" : "See packages and prices";
 // Only link to the portfolio when there is at least one project in that category
 const works = await getSortedWorks(locale);
-const usedCategories = new Set(works.map((w) => w.data.category));
+const usedCategories = new Set(works.flatMap((w) => [w.data.category, ...w.data.alsoIn]));
 const pricingHref = (s: ServiceItem) =>
 	`${localize("/pricing")}${s.category ? `#${slugify(s.category)}` : ""}`;
 const deliverablesLabel = it ? "Cosa ricevi" : "What you get";

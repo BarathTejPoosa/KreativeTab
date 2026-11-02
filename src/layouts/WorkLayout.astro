@@ -18,6 +18,22 @@ type Props = {
 const labels = {
 	en: {
 		visitProject: "View live",
+		liveDemo: "View live demo",
+		newTab: "(opens in a new tab)",
+		caseStudy: "Case study",
+		problem: "The problem",
+		built: "What we built",
+		stack: "Stack",
+		lighthouse: "Lighthouse scores",
+		performance: "Performance",
+		accessibility: "Accessibility",
+		bestPractices: "Best practices",
+		seoScore: "SEO",
+		lighthouseNote: (url: string, date: string) =>
+			`Real Google Lighthouse run, mobile settings, on ${url}${date ? ` on ${date}` : ""}. Scores can move a few points between runs.`,
+		conceptNote:
+			"This is a concept project we built to show what we can do. The business is fictional, so there are no client results or testimonials here.",
+		tryIt: "Try the demo yourself",
 		work: "Work",
 		allWork: "All work",
 		example: "Concept project · not client work",
@@ -28,6 +44,22 @@ const labels = {
 	},
 	it: {
 		visitProject: "Vedi online",
+		liveDemo: "Vedi la demo live",
+		newTab: "(si apre in una nuova scheda)",
+		caseStudy: "Case study",
+		problem: "Il problema",
+		built: "Cosa abbiamo realizzato",
+		stack: "Tecnologie",
+		lighthouse: "Punteggi Lighthouse",
+		performance: "Prestazioni",
+		accessibility: "Accessibilità",
+		bestPractices: "Best practice",
+		seoScore: "SEO",
+		lighthouseNote: (url: string, date: string) =>
+			`Test reale con Google Lighthouse, impostazioni mobile, su ${url}${date ? ` il ${date}` : ""}. I punteggi possono variare di qualche punto tra un test e l'altro.`,
+		conceptNote:
+			"Questo è un progetto concept che abbiamo realizzato per mostrare cosa sappiamo fare. L'attività è inventata, quindi qui non ci sono risultati o testimonianze di clienti.",
+		tryIt: "Prova tu stesso la demo",
 		work: "Lavori",
 		allWork: "Tutti i lavori",
 		example: "Progetto concept · non è un lavoro per un cliente",
@@ -54,10 +86,28 @@ const index = allWorks.findIndex((w) => w.slug === frontmatter.slug);
 const prev = allWorks.length > 1 ? allWorks[(index - 1 + allWorks.length) % allWorks.length] : undefined;
 const next = allWorks.length > 1 ? allWorks[(index + 1) % allWorks.length] : undefined;
 const others = allWorks.filter((w) => w.slug !== frontmatter.slug);
-const more = [
-	...others.filter((w) => w.data.category === work.category),
-	...others.filter((w) => w.data.category !== work.category),
-].slice(0, 3);
+const categoriesOf = (w: CollectionEntry<"works">) => [w.data.category ?? "Websites", ...w.data.alsoIn];
+const myCategories = new Set(categoriesOf(frontmatter));
+const sharesCategory = (w: CollectionEntry<"works">) => categoriesOf(w).some((c) => myCategories.has(c));
+const more = [...others.filter(sharesCategory), ...others.filter((w) => !sharesCategory(w))].slice(0, 3);
+
+const liveLabel = work.example ? l.liveDemo : l.visitProject;
+const caseStudy = work.caseStudy;
+const hasCaseStudy = !!(caseStudy && (caseStudy.problem || caseStudy.built || caseStudy.stack.length));
+const lh = work.lighthouse;
+const scores = lh
+	? [
+			{ label: l.performance, value: lh.performance },
+			{ label: l.accessibility, value: lh.accessibility },
+			{ label: l.bestPractices, value: lh.bestPractices },
+			{ label: l.seoScore, value: lh.seo },
+		].filter((s): s is { label: string; value: number } => typeof s.value === "number")
+	: [];
+const testedOn = lh?.testedOn
+	? lh.testedOn.toLocaleDateString(locale === "it" ? "it-IT" : "en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
+	: "";
+const testedUrl = lh?.testedUrl ?? work.link ?? "";
+const prettyUrl = (url: string) => url.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
 /** Turn YouTube / Vimeo page links into embeddable player URLs. */
 function embedUrl(url: string): string {
@@ -130,7 +180,7 @@ const seo: PageSeo = {
 		]),
 	],
 };
-const meta = [work.client, work.category, work.year].filter(Boolean);
+const meta = [work.client, [work.category, ...work.alsoIn].filter(Boolean).join(" + "), work.year].filter(Boolean);
 const imgWidths = [800, 1400, 2000];
 ---
 
@@ -156,11 +206,23 @@ const imgWidths = [800, 1400, 2000];
 						</p>
 					</div>
 					{
-						work.link && (
-							<a href={work.link} target="_blank" rel="noopener" class="inline-flex min-h-11 w-fit shrink-0 items-center gap-2 rounded-full bg-black px-5 text-sm font-semibold text-white transition-colors hover:bg-neutral-700">
-								{l.visitProject}
-								<Icon name="iconamoon:arrow-top-right-1-thin" class="h-5 w-5" />
-							</a>
+						(work.link || work.extraLinks.length > 0) && (
+							<div class="flex shrink-0 flex-wrap items-center gap-3">
+								{work.link && (
+									<a href={work.link} target="_blank" rel="noopener" class="inline-flex min-h-14 w-fit items-center gap-2 rounded-full bg-black px-7 text-base font-semibold text-white transition-colors hover:bg-neutral-700">
+										{liveLabel}
+										<Icon name="iconamoon:arrow-top-right-1-thin" class="h-5 w-5" aria-hidden="true" />
+										<span class="sr-only">{l.newTab}</span>
+									</a>
+								)}
+								{work.extraLinks.map((x) => (
+									<a href={x.url} target="_blank" rel="noopener" class="inline-flex min-h-14 w-fit items-center gap-2 rounded-full border border-neutral-300 px-6 text-sm font-semibold text-black transition-colors hover:border-black">
+										{x.label}
+										<Icon name="iconamoon:arrow-top-right-1-thin" class="h-4 w-4" aria-hidden="true" />
+										<span class="sr-only">{l.newTab}</span>
+									</a>
+								))}
+							</div>
 						)
 					}
 				</div>
@@ -175,6 +237,55 @@ const imgWidths = [800, 1400, 2000];
 				}
 				{work.intro && <p class="mb-0 mt-8 max-w-2xl text-lg leading-relaxed text-neutral-700">{work.intro}</p>}
 			</header>
+
+			{
+				(hasCaseStudy || scores.length > 0) && (
+					<section aria-labelledby="case-study-heading" class="mx-auto mt-12 max-w-[1400px] rounded-3xl border border-neutral-200 bg-neutral-50 p-6 md:mt-16 md:p-10">
+						<h2 id="case-study-heading" class="m-0 text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">{l.caseStudy}</h2>
+						{hasCaseStudy && (
+							<div class="mt-6 grid gap-8 md:grid-cols-3">
+								{caseStudy?.problem && (
+									<div>
+										<h3 class="m-0 text-lg">{l.problem}</h3>
+										<p class="mb-0 mt-3 whitespace-pre-line leading-relaxed text-neutral-700">{caseStudy.problem}</p>
+									</div>
+								)}
+								{caseStudy?.built && (
+									<div>
+										<h3 class="m-0 text-lg">{l.built}</h3>
+										<p class="mb-0 mt-3 whitespace-pre-line leading-relaxed text-neutral-700">{caseStudy.built}</p>
+									</div>
+								)}
+								{caseStudy && caseStudy.stack.length > 0 && (
+									<div>
+										<h3 class="m-0 text-lg">{l.stack}</h3>
+										<ul class="m-0 mt-3 flex list-none flex-wrap gap-2 p-0">
+											{caseStudy.stack.map((item) => (
+												<li class="rounded-full border border-neutral-300 bg-white px-3 py-1 text-sm text-neutral-700">{item}</li>
+											))}
+										</ul>
+									</div>
+								)}
+							</div>
+						)}
+						{scores.length > 0 && (
+							<div class="mt-10 border-t border-neutral-200 pt-8">
+								<h3 class="m-0 text-lg">{l.lighthouse}</h3>
+								<ul class="m-0 mt-5 grid list-none grid-cols-2 gap-4 p-0 sm:grid-cols-4">
+									{scores.map((s) => (
+										<li class="flex items-center gap-3">
+											<span class:list={["inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-[3px] font-display text-lg font-semibold", s.value >= 90 ? "border-emerald-600 text-emerald-800" : s.value >= 50 ? "border-amber-500 text-amber-800" : "border-red-600 text-red-800"]}>{s.value}</span>
+											<span class="text-sm text-neutral-700">{s.label}</span>
+										</li>
+									))}
+								</ul>
+								{testedUrl && <p class="mb-0 mt-5 text-sm text-neutral-500">{l.lighthouseNote(prettyUrl(testedUrl), testedOn)}</p>}
+							</div>
+						)}
+						{work.example && <p class="mb-0 mt-8 text-sm text-neutral-500">{l.conceptNote}</p>}
+					</section>
+				)
+			}
 
 			<div class="project-stack mx-auto mt-12 flex max-w-[1400px] flex-col gap-4 md:mt-16 md:gap-6">
 				{
@@ -232,6 +343,19 @@ const imgWidths = [800, 1400, 2000];
 					})
 				}
 			</div>
+
+			{
+				work.link && (
+					<div class="mx-auto mt-14 flex max-w-[1400px] flex-col items-center gap-4 text-center">
+						<p class="m-0 font-display text-2xl md:text-3xl">{work.example ? l.tryIt : work.title}</p>
+						<a href={work.link} target="_blank" rel="noopener" class="inline-flex min-h-14 items-center gap-2 rounded-full bg-black px-7 text-base font-semibold text-white transition-colors hover:bg-neutral-700">
+							{liveLabel}
+							<Icon name="iconamoon:arrow-top-right-1-thin" class="h-5 w-5" aria-hidden="true" />
+							<span class="sr-only">{l.newTab}</span>
+						</a>
+					</div>
+				)
+			}
 
 			<div class="mx-auto mt-16 max-w-[1400px]">
 				<Share />
