@@ -98,6 +98,10 @@ const worksCollection = defineCollection({
 			extraLinks: z
 				.array(z.object({ label: z.string(), url: z.string() }))
 				.default([]),
+			/** Process gallery: sketches, wireframes, design boards, in step order */
+			process: z
+				.array(z.object({ image: image(), alt: optionalText, caption: optionalText }))
+				.default([]),
 			caseStudy: z
 				.object({
 					problem: optionalText,

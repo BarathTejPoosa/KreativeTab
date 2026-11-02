@@ -867,6 +867,18 @@ const worksCollection = (locale: LocaleKey, prefix: string) =>
 					itemLabel: (props) => props.fields.label.value || "Link",
 				},
 			),
+			process: fields.array(
+				fields.object({
+					image: workImage("Image"),
+					alt: altText("Alt text"),
+					caption: workCaption(),
+				}),
+				{
+					label: "Process gallery (optional)",
+					description: "Sketches, wireframes, UI boards and other process images, in step order. Shown as a “Process” grid; click to enlarge.",
+					itemLabel: (props) => props.fields.caption.value || "Process image",
+				},
+			),
 			caseStudy: fields.object(
 				{
 					problem: fields.text({ label: "The problem", multiline: true }),
