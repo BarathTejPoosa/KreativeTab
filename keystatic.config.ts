@@ -854,7 +854,7 @@ const worksCollection = (locale: LocaleKey, prefix: string) =>
 			),
 			link: fields.url({
 				label: "Live project link (optional)",
-				description: "Shown as a big “View live demo” button (concept projects) or “View live” (client work). Opens in a new tab.",
+				description: "Shown as a big “View live demo” button (showcase builds) or “View live” (client work). Opens in a new tab.",
 			}),
 			extraLinks: fields.array(
 				fields.object({
@@ -899,8 +899,8 @@ const worksCollection = (locale: LocaleKey, prefix: string) =>
 			}),
 			hidden: fields.checkbox({ label: "Hidden (draft)", defaultValue: false }),
 			example: fields.checkbox({
-				label: "Concept project (not client work)",
-				description: "Shows a “Concept” badge. Untick for real client work.",
+				label: "Showcase build",
+				description: "Shows a “Showcase build” badge and live demo button. Untick for real client work.",
 				defaultValue: false,
 			}),
 			seo: seoFields("project"),

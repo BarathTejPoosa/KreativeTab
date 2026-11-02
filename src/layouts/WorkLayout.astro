@@ -31,12 +31,12 @@ const labels = {
 		seoScore: "SEO",
 		lighthouseNote: (url: string, date: string) =>
 			`Real Google Lighthouse run, mobile settings, on ${url}${date ? ` on ${date}` : ""}. Scores can move a few points between runs.`,
-		conceptNote:
-			"This is a concept project we built to show what we can do. The business is fictional, so there are no client results or testimonials here.",
+		showcaseNote:
+			"Built by KreativeTab to show what's possible.",
 		tryIt: "Try the demo yourself",
 		work: "Work",
 		allWork: "All work",
-		example: "Concept project · not client work",
+		example: "Showcase build: what we can create for you",
 		more: "More projects",
 		prev: "Previous",
 		next: "Next",
@@ -57,12 +57,12 @@ const labels = {
 		seoScore: "SEO",
 		lighthouseNote: (url: string, date: string) =>
 			`Test reale con Google Lighthouse, impostazioni mobile, su ${url}${date ? ` il ${date}` : ""}. I punteggi possono variare di qualche punto tra un test e l'altro.`,
-		conceptNote:
-			"Questo è un progetto concept che abbiamo realizzato per mostrare cosa sappiamo fare. L'attività è inventata, quindi qui non ci sono risultati o testimonianze di clienti.",
+		showcaseNote:
+			"Realizzato da KreativeTab per mostrare cosa è possibile.",
 		tryIt: "Prova tu stesso la demo",
 		work: "Lavori",
 		allWork: "Tutti i lavori",
-		example: "Progetto concept · non è un lavoro per un cliente",
+		example: "Progetto showcase: ciò che possiamo creare per te",
 		more: "Altri progetti",
 		prev: "Precedente",
 		next: "Successivo",
@@ -282,7 +282,7 @@ const imgWidths = [800, 1400, 2000];
 								{testedUrl && <p class="mb-0 mt-5 text-sm text-neutral-500">{l.lighthouseNote(prettyUrl(testedUrl), testedOn)}</p>}
 							</div>
 						)}
-						{work.example && <p class="mb-0 mt-8 text-sm text-neutral-500">{l.conceptNote}</p>}
+						{work.example && <p class="mb-0 mt-8 text-sm text-neutral-500">{l.showcaseNote}</p>}
 					</section>
 				)
 			}
