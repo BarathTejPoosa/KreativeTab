@@ -2,8 +2,8 @@
 
 KreativeTab’s agency website, built with Astro, Tailwind CSS, Markdoc and [Keystatic](https://keystatic.com) (CMS). Hosted on Vercel.
 
-- Live: https://kreativetab.vercel.app
-- CMS: https://kreativetab.vercel.app/keystatic (also `/admin`)
+- Live: https://kreativetab.com
+- CMS: https://kreativetab.com/keystatic (also `/admin`)
 
 ## Editing content (no code needed)
 
@@ -28,7 +28,7 @@ Items marked **Example** (and the “Example” badge on the site) are placehold
 
 Keystatic needs a GitHub App to log editors in on the live site:
 
-1. Locally: `bun install && PUBLIC_KEYSTATIC_STORAGE=github bun run dev`, open http://localhost:4321/keystatic and follow **“Create GitHub App”** (enter `https://kreativetab.vercel.app` as the deployed URL). Keystatic writes four values to `.env`.
+1. Locally: `bun install && PUBLIC_KEYSTATIC_STORAGE=github bun run dev`, open http://localhost:4321/keystatic and follow **“Create GitHub App”** (enter `https://kreativetab.com` as the deployed URL). Keystatic writes four values to `.env`.
 2. Add these to Vercel → Project → Settings → Environment Variables (Production + Preview): `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET`, `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`.
 3. Install the GitHub App on the `KreativeTab` repo and redeploy.
 
